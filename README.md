@@ -365,9 +365,7 @@ This section is mandatory and included explicitly for security evaluation.
 
 | Risk | Description | Mitigation Strategy |
 |---|---|---|
-| Prompt Injection | Malicious input manipulating agent behaviour | Input sanitization for customer-controlled fields, structured output schemas, strict validation and reject-on-fail behavior |
-| Data Privacy / PII | Resume/email data contains personal info | Local data handling where possible, masked/limited metadata in logs, avoid unnecessary raw PII propagation to prompts |
+| Prompt Injection | Malicious input manipulating agent behaviour | Input sanitization for customer-controlled fields, structured output schemas, strict validation and reject on fail behavior |
 | API Key Exposure | LLM/email API keys leaked in code | `.env` + settings loader, no hardcoded keys, `.env` excluded via `.gitignore`, recommend secrets manager in production |
-| Hallucination Risk | LLM generating false scores or wrong email content | Structured output validation, deterministic context matching checks, reject invalid output, human approval gate before delivery |
 | Unauthorised Access | Anyone triggering the agent endpoint | Add API auth (API key/OAuth) before external exposure, apply rate limiting and gateway protections in deployment |
-| Email Spoofing | Emails appearing from wrong sender (Task 2) | SPF/DKIM/DMARC with verified sender domain for real sending phase; keep dry-run mode as default in current testing phase |
+| Email Spoofing | Emails appearing from wrong sender | SPF/DKIM/DMARC with verified sender domain for real sending phase; keep dry-run mode as default in current testing phase |
