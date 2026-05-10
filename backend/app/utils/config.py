@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     api_port: int = 8000
     cors_origins: list[str] = ["http://localhost:8501"]
     database_url: str = DEFAULT_DB_URL
+    reset_db_on_start: bool = True
     log_level: str = "INFO"
     log_file: str = DEFAULT_LOG_FILE
     ai_provider: str = "gemini"

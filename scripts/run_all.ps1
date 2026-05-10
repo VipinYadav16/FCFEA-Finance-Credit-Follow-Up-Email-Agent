@@ -55,10 +55,35 @@ Start-Process -FilePath $backendPy -WorkingDirectory $repoRoot -ArgumentList @(
     "app.main:app",
     "--app-dir",
     "backend",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8000",
     "--reload"
 )
 
+Write-Host "Waiting for backend health..."
+$backendReady = $false
+for ($i = 0; $i -lt 30; $i++) {
+    Start-Sleep -Milliseconds 500
+    try {
+        $resp = Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8000/health" -TimeoutSec 2
+        if ($resp.StatusCode -eq 200) {
+            $backendReady = $true
+            break
+        }
+    } catch {
+        # keep retrying
+    }
+}
+if (-not $backendReady) {
+    Write-Warning "Backend did not become ready in time. Frontend may show temporary connectivity errors."
+}
+
 Write-Host "Starting frontend (http://localhost:8501)"
+if (-not $env:BACKEND_URL) {
+    $env:BACKEND_URL = "http://127.0.0.1:8000"
+}
 Start-Process -FilePath $frontendPy -WorkingDirectory $repoRoot -ArgumentList @(
     "-m",
     "streamlit",
