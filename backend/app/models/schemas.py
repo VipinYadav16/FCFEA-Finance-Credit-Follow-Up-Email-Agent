@@ -5,7 +5,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field
 from pydantic import condecimal, conint
 
-from app.models.enums import EscalationStage, PaymentStatus
+from app.models.enums import DeliveryStatus, EscalationStage, PaymentStatus
 from app.utils.overdue import calculate_overdue_days, is_invoice_overdue
 
 
@@ -159,3 +159,35 @@ class GeneratedEmailPreviewResponse(BaseModel):
     email_body: str
     content_summary: str
     generated_at: datetime
+
+
+class DeliveryRejectRequest(BaseModel):
+    reason: str = Field(..., min_length=5, max_length=500)
+
+
+class DeliveryStatusResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    invoice_id: str
+    delivery_status: DeliveryStatus
+    delivery_mode: str
+    approved_at: datetime | None
+    rejected_at: datetime | None
+    sent_at: datetime | None
+    rejection_reason: str | None
+    last_error: str | None
+    metadata_json: dict[str, Any] | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class DeliveryActionResponse(BaseModel):
+    invoice_id: str
+    delivery_status: DeliveryStatus
+    message: str
+    timestamp: datetime
+    metadata: dict[str, Any] | None = None
+
+
+class DeliverySummaryResponse(BaseModel):
+    counts: dict[str, int]

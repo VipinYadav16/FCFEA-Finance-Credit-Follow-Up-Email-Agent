@@ -42,3 +42,13 @@ class AIOutputValidationError(AppError):
 class PromptLoadError(AppError):
     def __init__(self, message: str) -> None:
         super().__init__(message)
+
+
+class DeliveryStateError(AppError):
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class DeliveryNotFoundError(AppError):
+    def __init__(self, invoice_id: str) -> None:
+        super().__init__(f"No delivery record found for invoice '{invoice_id}'")

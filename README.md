@@ -51,6 +51,32 @@ Workflow-first architecture for enterprise finance follow-up with deterministic 
   - tone/completeness indicators
 - Centralized AI attempt audit logging through `/audit` (`AI_GENERATION_ATTEMPT`)
 
+## Governed Delivery Scope (Step 5)
+
+- Delivery status model with deterministic transitions:
+  - `GENERATED`
+  - `PENDING_APPROVAL`
+  - `APPROVED`
+  - `REJECTED`
+  - `DRY_RUN_SENT`
+  - `SENT`
+  - `FAILED`
+- Delivery provider abstraction (`base_provider`) with default-safe dry-run provider
+- Human review workflow services:
+  - approve
+  - reject
+  - regenerate
+  - dry-run send
+- Safety guardrails:
+  - unapproved emails cannot send
+  - rejected/sent transition protections
+  - missing preview protections
+- Delivery observability via audit events:
+  - `DELIVERY_APPROVAL`
+  - `DELIVERY_REJECTION`
+  - `DELIVERY_REGENERATE`
+  - `DELIVERY_DRY_RUN`
+
 ## AI Safety Boundaries
 
 - AI cannot control escalation, overdue logic, or workflow state decisions.
@@ -79,6 +105,16 @@ Workflow-first architecture for enterprise finance follow-up with deterministic 
 - `POST /ai/generate/{invoice_id}`
 - `POST /ai/generate-overdue-batch`
 - `GET /ai/generated-preview/{invoice_id}`
+
+### Delivery Governance
+
+- `POST /delivery/approve/{invoice_id}`
+- `POST /delivery/reject/{invoice_id}`
+- `POST /delivery/dry-run-send/{invoice_id}`
+- `POST /delivery/regenerate/{invoice_id}`
+- `GET /delivery/status/{invoice_id}`
+- `GET /delivery/pending-approvals`
+- `GET /delivery/summary`
 
 ## Setup
 

@@ -13,3 +13,13 @@ class PaymentStatus(str, Enum):
     PENDING = "PENDING"
     PAID = "PAID"
     ESCALATED = "ESCALATED"
+
+
+class DeliveryStatus(str, Enum):
+    GENERATED = "GENERATED"
+    PENDING_APPROVAL = "PENDING_APPROVAL"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    DRY_RUN_SENT = "DRY_RUN_SENT"
+    SENT = "SENT"
+    FAILED = "FAILED"

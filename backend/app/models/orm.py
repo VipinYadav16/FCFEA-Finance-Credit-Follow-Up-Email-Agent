@@ -5,7 +5,7 @@ from sqlalchemy import JSON, Date, DateTime, Enum as SAEnum, ForeignKey, Index, 
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
-from app.models.enums import EscalationStage, PaymentStatus
+from app.models.enums import DeliveryStatus, EscalationStage, PaymentStatus
 
 
 def utc_now() -> datetime:
@@ -79,3 +79,36 @@ class GeneratedEmailPreview(Base):
     email_body: Mapped[str] = mapped_column(String(5000), nullable=False)
     content_summary: Mapped[str] = mapped_column(String(500), nullable=False)
     generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, index=True)
+
+
+class DeliveryRecord(Base):
+    __tablename__ = "delivery_records"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    invoice_id: Mapped[str] = mapped_column(
+        String(64),
+        ForeignKey("invoices.invoice_id"),
+        unique=True,
+        index=True,
+        nullable=False,
+    )
+    delivery_status: Mapped[DeliveryStatus] = mapped_column(
+        SAEnum(DeliveryStatus),
+        default=DeliveryStatus.GENERATED,
+        nullable=False,
+        index=True,
+    )
+    delivery_mode: Mapped[str] = mapped_column(String(20), default="DRY_RUN", nullable=False)
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    rejected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    rejection_reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    last_error: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    metadata_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        onupdate=utc_now,
+        nullable=False,
+    )
