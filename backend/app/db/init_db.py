@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from app.db.session import Base, engine
+from app.models import orm  # noqa: F401
 from app.utils.config import settings
 
 
