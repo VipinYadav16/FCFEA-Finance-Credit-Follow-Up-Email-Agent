@@ -1,0 +1,6 @@
+﻿invoice_id,client_name,client_email,amount_due,due_date,overdue_days,escalation_stage,payment_status,follow_up_count
+CSV-DEMO-008,Pinnacle MedTech,finance@pinnaclemed.example,2530.25,2026-05-03,7,STAGE_1,PENDING,1
+CSV-DEMO-006,SilverOak Foods,collections@silveroak.example,1890.75,2026-05-06,4,STAGE_1,PENDING,1
+CSV-DEMO-001,Northwind Retail,finance@northwind.example,950.00,2026-05-08,2,STAGE_1,PENDING,0
+CSV-DEMO-011,Everleaf Pharma,billing@everleaf.example,720.40,2026-05-14,0,STAGE_1,PENDING,0
+CSV-DEMO-005,Greenline Services,ar@greenline.example,600.00,2026-05-15,0,STAGE_1,PENDING,0

@@ -1,0 +1,3 @@
+﻿invoice_id,client_name,client_email,amount_due,due_date,overdue_days,escalation_stage,payment_status,follow_up_count
+CSV-DEMO-012,Quantum Nexus,ar@quantumnexus.example,4680.90,2026-04-28,12,STAGE_2,PENDING,2
+CSV-DEMO-002,BluePeak Manufacturing,ap@bluepeak.example,4200.50,2026-05-01,9,STAGE_2,PENDING,1

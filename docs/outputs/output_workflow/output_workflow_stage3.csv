@@ -1,0 +1,3 @@
+﻿invoice_id,client_name,client_email,amount_due,due_date,overdue_days,escalation_stage,payment_status,follow_up_count
+CSV-DEMO-009,Harborline Energy,ap@harborline.example,9825.00,2026-04-20,20,STAGE_3,PENDING,2
+CSV-DEMO-003,Axis Commercial,accounts@axis.example,7800.00,2026-04-24,16,STAGE_3,PENDING,2
