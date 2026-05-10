@@ -1,10 +1,10 @@
 # Finance Credit Follow-Up Email Agent
 
-Enterprise-style AI-powered platform for finance credit follow-up operations with deterministic workflow governance, constrained AI communication, human approval controls, dry-run execution, and LangGraph-based orchestration tracing.
+Enterprise style AI powered platform for finance credit follow-up operations with deterministic workflow governance, constrained AI communication, human approval controls, dry run execution, and LangGraph-based orchestration tracing.
 
 ## Business Problem
 
-Finance teams need consistent, auditable, and safe overdue payment follow-up workflows. Manual processes are hard to scale, difficult to govern, and often lack operational traceability.
+Finance teams need consistent, auditable, and safe overdue payment follow up workflows. Manual processes are hard to scale, difficult to govern, and often lack operational traceability.
 
 ## Key Features
 
