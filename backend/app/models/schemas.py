@@ -1,6 +1,83 @@
-from pydantic import BaseModel
+from datetime import date, datetime
+from decimal import Decimal
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field
+from pydantic import condecimal, conint
+
+from app.models.enums import EscalationStage, PaymentStatus
+from app.utils.overdue import calculate_overdue_days, is_invoice_overdue
 
 
 class HealthStatus(BaseModel):
     status: str
     app: str
+
+
+class CreateInvoiceRequest(BaseModel):
+    invoice_id: str = Field(..., min_length=1, description="External invoice identifier")
+    client_name: str = Field(..., min_length=1, description="Client legal name")
+    client_email: EmailStr = Field(..., description="Client billing contact email")
+    amount_due: condecimal(gt=0, max_digits=12, decimal_places=2) = Field(
+        ..., description="Outstanding amount due"
+    )
+    due_date: date = Field(..., description="Invoice due date")
+    follow_up_count: conint(ge=0) = Field(0, description="Number of follow-up attempts")
+    current_stage: EscalationStage = Field(
+        EscalationStage.STAGE_1, description="Current escalation stage"
+    )
+    payment_status: PaymentStatus = Field(
+        PaymentStatus.PENDING, description="Current payment status"
+    )
+    last_followup_date: datetime | None = Field(
+        None, description="UTC timestamp of last follow-up"
+    )
+
+
+class UpdateInvoiceRequest(BaseModel):
+    client_name: str | None = Field(None, min_length=1)
+    client_email: EmailStr | None = None
+    amount_due: condecimal(gt=0, max_digits=12, decimal_places=2) | None = None
+    due_date: date | None = None
+    follow_up_count: conint(ge=0) | None = None
+    current_stage: EscalationStage | None = None
+    payment_status: PaymentStatus | None = None
+    last_followup_date: datetime | None = None
+
+
+class InvoiceResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    invoice_id: str
+    client_name: str
+    client_email: EmailStr
+    amount_due: Decimal
+    due_date: date
+    follow_up_count: int
+    current_stage: EscalationStage
+    payment_status: PaymentStatus
+    last_followup_date: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+    @computed_field
+    @property
+    def overdue_days(self) -> int:
+        return calculate_overdue_days(self.due_date)
+
+    @computed_field
+    @property
+    def is_overdue(self) -> bool:
+        return is_invoice_overdue(self.due_date)
+
+
+class AuditLogResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    invoice_id: str
+    action_type: str
+    status: str
+    timestamp: datetime
+    metadata_json: dict[str, Any] | None
