@@ -117,7 +117,7 @@ def process_overdue_invoices(db: Session) -> WorkflowRunSummary:
     finished_at = datetime.now(timezone.utc)
     duration_seconds = (finished_at - started_at).total_seconds()
     logger.info(
-        "Workflow run complete: processed=%s updated=%s skipped=%s errors=%s overdue=%s escalated=%s legal=%s",
+        "Workflow run complete: processed=%s updated=%s skipped=%s errors=%s overdue=%s escalated=%s legal=%s duration=%ss",
         counts.processed,
         counts.updated,
         counts.skipped,

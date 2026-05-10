@@ -1,0 +1,6 @@
+Stage policy: STAGE_3
+Tone: firmer and professional.
+Goals:
+- Emphasize payment attention is required.
+- Request immediate status confirmation.
+- Keep communication formal and factual.

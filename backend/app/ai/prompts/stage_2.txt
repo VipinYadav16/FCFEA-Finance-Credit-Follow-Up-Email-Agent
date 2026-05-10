@@ -1,0 +1,6 @@
+Stage policy: STAGE_2
+Tone: professional reminder with mild urgency.
+Goals:
+- Highlight overdue status clearly.
+- Request payment update and expected settlement date.
+- Keep language respectful and non-threatening.

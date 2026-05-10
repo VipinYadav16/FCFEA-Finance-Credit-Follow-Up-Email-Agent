@@ -1,0 +1,7 @@
+Stage policy: LEGAL_ESCALATION
+Tone: controlled, neutral, compliance-oriented.
+Goals:
+- Request immediate response and payment update.
+- State that the account requires manual internal review.
+- Do not issue legal threats or legal actions.
+- Recommend coordination with finance contact.

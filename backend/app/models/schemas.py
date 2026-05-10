@@ -5,7 +5,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field
 from pydantic import condecimal, conint
 
-from app.models.enums import EscalationStage, PaymentStatus
+from app.models.enums import DeliveryStatus, EscalationStage, PaymentStatus
 from app.utils.overdue import calculate_overdue_days, is_invoice_overdue
 
 
@@ -108,3 +108,119 @@ class WorkflowRunSummary(BaseModel):
     duration_seconds: float
     stage_counts: dict[str, int]
     updated_invoices: list[WorkflowInvoiceContext]
+
+
+class AIEmailOutput(BaseModel):
+    subject: str = Field(..., min_length=3, max_length=255)
+    email_body: str = Field(..., min_length=30, max_length=5000)
+    tone_used: str = Field(..., min_length=3, max_length=100)
+    escalation_stage: EscalationStage
+
+
+class AIValidationIssue(BaseModel):
+    code: str
+    message: str
+    severity: str = "error"
+
+
+class AIEmailGenerationResponse(BaseModel):
+    invoice_id: str
+    generated_at: datetime
+    model_name: str
+    prompt_version: str
+    stage_prompt_name: str
+    generation_latency_ms: int
+    validation_passed: bool
+    validation_issues: list[AIValidationIssue]
+    tone_consistent: bool
+    output_complete: bool
+    output: AIEmailOutput
+
+
+class AIBatchGenerateRequest(BaseModel):
+    limit: int = Field(20, ge=1, le=200, description="Max overdue invoices to generate preview for")
+
+
+class AIBatchGenerateResponse(BaseModel):
+    generated_count: int
+    failed_count: int
+    items: list[AIEmailGenerationResponse]
+    failures: list[dict[str, str]]
+
+
+class GeneratedEmailPreviewResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    invoice_id: str
+    escalation_stage: EscalationStage
+    tone_used: str
+    subject: str
+    email_body: str
+    content_summary: str
+    generated_at: datetime
+
+
+class DeliveryRejectRequest(BaseModel):
+    reason: str = Field(..., min_length=5, max_length=500)
+
+
+class DeliveryStatusResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    invoice_id: str
+    delivery_status: DeliveryStatus
+    delivery_mode: str
+    approved_at: datetime | None
+    rejected_at: datetime | None
+    sent_at: datetime | None
+    rejection_reason: str | None
+    last_error: str | None
+    metadata_json: dict[str, Any] | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class DeliveryActionResponse(BaseModel):
+    invoice_id: str
+    delivery_status: DeliveryStatus
+    message: str
+    timestamp: datetime
+    metadata: dict[str, Any] | None = None
+
+
+class DeliverySummaryResponse(BaseModel):
+    counts: dict[str, int]
+
+
+class OrchestrationTraceEvent(BaseModel):
+    node: str
+    status: str
+    timestamp: datetime
+    duration_ms: int
+    message: str | None = None
+    metadata: dict[str, Any] | None = None
+
+
+class OrchestrationStatusResponse(BaseModel):
+    invoice_id: str
+    workflow_status: str
+    approval_status: str
+    delivery_status: DeliveryStatus | None = None
+    current_node: str | None = None
+    error_state: str | None = None
+    started_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class OrchestrationRunResponse(BaseModel):
+    invoice_id: str
+    workflow_status: str
+    message: str
+    trace_events: list[OrchestrationTraceEvent]
+
+
+class OrchestrationTraceResponse(BaseModel):
+    invoice_id: str
+    workflow_status: str
+    trace_events: list[OrchestrationTraceEvent]
