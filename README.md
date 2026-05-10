@@ -256,6 +256,36 @@ Orchestration:
 - Orchestration run/resume/status/trace timeline viewer
 - Audit log explorer
 
+## Screenshots
+
+### Dashboard
+
+![Dashboard](docs/assets/dashboard.png)
+
+### Invoices
+
+![Invoices](docs/assets/invoices.png)
+
+### Workflows
+
+![Workflows](docs/assets/workflow.png)
+
+### AI Preview
+
+![AI Preview](docs/assets/ai_preview.png)
+
+### Delivery
+
+![Delivery](docs/assets/delivery.png)
+
+### Orchestration
+
+![Orchestration](docs/assets/orchestration.png)
+
+### Audit
+
+![Audit](docs/assets/audit_logs.png)
+
 ## Deployment Readiness
 
 - Dockerfile: [Dockerfile](Dockerfile)
@@ -273,18 +303,6 @@ docker compose up --build
 - Presentation notes: [docs/presentation_notes.md](docs/presentation_notes.md)
 - Demo dataset: [data/demo/demo_invoices.csv](data/demo/demo_invoices.csv)
 - Sample outputs: `docs/sample_outputs/`
-
-## Screenshots
-
-Place screenshots and optional GIFs in `docs/assets/` using these names:
-
-- `dashboard.png`
-- `ai_preview.png`
-- `delivery_queue.png`
-- `orchestration_trace.png`
-- `dry_run_send.png`
-
-Then include them in this section for final submission.
 
 ## Future Improvements
 
