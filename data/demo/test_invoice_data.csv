@@ -1,0 +1,13 @@
+invoice_id,client_name,client_email,amount_due,due_date,follow_up_count,current_stage,payment_status,last_followup_date
+CSV-DEMO-001,Northwind Retail,finance@northwind.example,950.00,2026-05-08,0,STAGE_1,PENDING,
+CSV-DEMO-002,BluePeak Manufacturing,ap@bluepeak.example,4200.50,2026-05-01,1,STAGE_2,PENDING,2026-05-09T10:30:00Z
+CSV-DEMO-003,Axis Commercial,accounts@axis.example,7800.00,2026-04-24,2,STAGE_3,PENDING,2026-05-08T14:15:00Z
+CSV-DEMO-004,Vertex Logistics,billing@vertex.example,12500.00,2026-04-16,3,STAGE_4,ESCALATED,2026-05-07T09:00:00Z
+CSV-DEMO-005,Greenline Services,ar@greenline.example,600.00,2026-05-15,0,STAGE_1,PENDING,
+CSV-DEMO-006,SilverOak Foods,collections@silveroak.example,1890.75,2026-05-06,1,STAGE_1,PENDING,2026-05-09T08:45:00Z
+CSV-DEMO-007,UrbanCore Supplies,billing@urbancore.example,11737.72,2026-04-12,4,LEGAL_ESCALATION,ESCALATED,2026-05-03T12:39:00Z
+CSV-DEMO-008,Pinnacle MedTech,finance@pinnaclemed.example,2530.25,2026-05-03,1,STAGE_2,PENDING,2026-05-09T16:20:00Z
+CSV-DEMO-009,Harborline Energy,ap@harborline.example,9825.00,2026-04-20,2,STAGE_3,PENDING,2026-05-06T11:05:00Z
+CSV-DEMO-010,TruBuild Infra,accounts@trubuild.example,15100.00,2026-04-10,5,LEGAL_ESCALATION,ESCALATED,2026-05-02T07:50:00Z
+CSV-DEMO-011,Everleaf Pharma,billing@everleaf.example,720.40,2026-05-14,0,STAGE_1,PENDING,
+CSV-DEMO-012,Quantum Nexus,ar@quantumnexus.example,4680.90,2026-04-28,2,STAGE_3,PENDING,2026-05-08T13:10:00Z
