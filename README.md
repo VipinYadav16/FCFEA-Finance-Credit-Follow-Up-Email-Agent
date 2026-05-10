@@ -1,204 +1,226 @@
 # Finance Credit Follow-Up Email Agent
 
-Workflow-first architecture for enterprise finance follow-up with deterministic workflow logic and controlled AI communication.
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.38-FF4B4B)
+![LangGraph](https://img.shields.io/badge/LangGraph-0.2.39-4B0082)
+![Gemini](https://img.shields.io/badge/Gemini-1.5%20Flash-4285F4)
 
-## Current Architecture
+Enterprise-style AI-powered platform for finance credit follow-up operations with deterministic workflow governance, constrained AI communication, human approval controls, dry-run execution, and LangGraph-based orchestration tracing.
 
-- API layer: FastAPI routes under `backend/app/api`
-- Service layer: domain services under `backend/app/services`
-- Workflow layer: deterministic escalation engine under `backend/app/workflows`
-- AI communication layer: provider abstraction, prompt files, and validation under `backend/app/ai`
-- Data layer: SQLAlchemy ORM and SQLite under `backend/app/models` and `backend/app/db`
-- UI layer: Streamlit API-driven dashboard under `frontend/`
+## Business Problem
 
-## Deterministic Workflow Scope (Completed)
+Finance teams need consistent, auditable, and safe overdue payment follow-up workflows. Manual processes are hard to scale, difficult to govern, and often lack operational traceability.
 
-- Overdue invoice processing and escalation stage assignment
-- Stage transition audit logging
-- Workflow summaries and stage-based filters
-- Smoke script for workflow stabilization
+## Key Features
 
-## AI Communication Layer Scope (Step 4)
+- Deterministic overdue and escalation workflow engine
+- Stage-aware AI email generation with structured output validation
+- Prompt-injection mitigation and forbidden language checks
+- Human approval workflow before any delivery execution
+- Dry-run delivery simulation (default-safe mode)
+- LangGraph orchestration with pause/resume support
+- Full audit trail for workflow, AI, delivery, and orchestration events
+- Operations dashboard in Streamlit
 
-- Gemini integration via provider abstraction (`BaseAIProvider`, `GeminiProvider`)
-- Externalized prompt architecture:
-  - `system_prompt.txt`
-  - `stage_1.txt`
-  - `stage_2.txt`
-  - `stage_3.txt`
-  - `stage_4.txt`
-  - `legal_escalation.txt`
-- Structured output schema validation (`AIEmailOutput`)
-- Prompt injection mitigation through field sanitization
-- AI output safety checks (stage consistency, deterministic field presence, unsafe-language screening)
-- Generated preview persistence (`generated_email_previews` table)
+## Architecture Overview
 
-## AI Hardening Scope (Step 4.5)
+- `backend/app/api`: FastAPI route layer
+- `backend/app/services`: business/application services
+- `backend/app/workflows`: deterministic workflow engine + LangGraph orchestration
+- `backend/app/ai`: AI provider abstraction, prompts, validation, sanitization
+- `backend/app/delivery`: delivery provider abstraction and dry-run provider
+- `backend/app/models`: ORM and Pydantic schemas
+- `frontend/streamlit_app.py`: operations dashboard
 
-- Modular AI validation layer (`backend/app/ai/validation.py`)
-  - required fields
-  - formatting checks
-  - forbidden phrase checks
-  - unsafe tone checks
-  - hallucination checks against deterministic context
-- Output sanitization and normalization (`backend/app/ai/sanitization.py`)
-- Evaluation helpers for consistency/completeness (`backend/app/ai/evaluation.py`)
-- Expanded observability:
-  - prompt version
-  - stage prompt name
-  - generation latency
-  - validation status/issues
-  - tone/completeness indicators
-- Centralized AI attempt audit logging through `/audit` (`AI_GENERATION_ATTEMPT`)
+Detailed diagrams: [docs/architecture_diagrams.md](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docs/architecture_diagrams.md)
 
-## Governed Delivery Scope (Step 5)
+## Workflow Lifecycle
 
-- Delivery status model with deterministic transitions:
-  - `GENERATED`
-  - `PENDING_APPROVAL`
-  - `APPROVED`
-  - `REJECTED`
-  - `DRY_RUN_SENT`
-  - `SENT`
-  - `FAILED`
-- Delivery provider abstraction (`base_provider`) with default-safe dry-run provider
-- Human review workflow services:
-  - approve
-  - reject
-  - regenerate
-  - dry-run send
-- Safety guardrails:
-  - unapproved emails cannot send
-  - rejected/sent transition protections
-  - missing preview protections
-- Delivery observability via audit events:
-  - `DELIVERY_APPROVAL`
-  - `DELIVERY_REJECTION`
-  - `DELIVERY_REGENERATE`
-  - `DELIVERY_DRY_RUN`
+1. Invoice ingestion
+2. Overdue detection
+3. Escalation classification
+4. AI email generation (structured output)
+5. AI validation and safety checks
+6. Preview creation
+7. Human approval/rejection
+8. Dry-run delivery execution
+9. Audit and orchestration trace updates
 
-## LangGraph Orchestration Scope (Step 6)
+## LangGraph Orchestration
 
-- LangGraph is used as a coordination layer over existing deterministic services.
-- Existing workflow, AI validation, and delivery logic are reused (not rewritten).
-- Centralized orchestration graph state includes:
-  - invoice id
-  - escalation stage
-  - workflow status
-  - approval status
-  - delivery status
-  - validation status
-  - trace events
-  - error state
-- Graph lifecycle:
-  - Fetch Invoice
-  - Workflow Processing
-  - AI Generation
-  - AI Validation
-  - Preview Creation
-  - Approval Wait (pause/interruption point)
-  - Dry-Run Delivery
-  - Audit Complete
-- Resume flow uses a dedicated graph segment starting from Approval Wait.
+- Node-based stateful execution over existing services
+- Approval interruption point (`PAUSED_APPROVAL`)
+- Resume workflow support after approval decision
+- Node transition history with durations and status
 
-## AI Safety Boundaries
-
-- AI cannot control escalation, overdue logic, or workflow state decisions.
-- AI output is restricted to communication rendering.
-- Prompt policy prohibits fabricated penalties, legal threats, harassment, emotional manipulation, and invented invoice facts.
-- Deterministic context is injected as trusted business truth for generation.
-- AI output is rejected when validation rules fail.
-
-## API Endpoints
-
-### Core
-
-- `POST /invoices`
-- `GET /invoices`
-- `GET /invoices/{invoice_id}`
-- `PUT /invoices/{invoice_id}`
-- `DELETE /invoices/{invoice_id}`
-- `POST /workflows/process-overdue`
-- `GET /workflows/overdue`
-- `GET /workflows/escalated`
-- `GET /workflows/stage/{stage}`
-- `GET /audit`
-
-### AI Preview
-
-- `POST /ai/generate/{invoice_id}`
-- `POST /ai/generate-overdue-batch`
-- `GET /ai/generated-preview/{invoice_id}`
-
-### Delivery Governance
-
-- `POST /delivery/approve/{invoice_id}`
-- `POST /delivery/reject/{invoice_id}`
-- `POST /delivery/dry-run-send/{invoice_id}`
-- `POST /delivery/regenerate/{invoice_id}`
-- `GET /delivery/status/{invoice_id}`
-- `GET /delivery/pending-approvals`
-- `GET /delivery/summary`
-
-### Orchestration
+Endpoints:
 
 - `POST /orchestration/run/{invoice_id}`
 - `POST /orchestration/resume/{invoice_id}`
 - `GET /orchestration/trace/{invoice_id}`
 - `GET /orchestration/status/{invoice_id}`
 
-## Setup
+## AI Safety and Governance
 
-1. Create virtual environment:
+- Externalized system/stage prompt files
+- Structured output schema (`subject`, `email_body`, `tone_used`, `escalation_stage`)
+- Hallucination checks against deterministic invoice context
+- Forbidden phrase detection (threats, fabricated legal/penalty claims)
+- Sanitization and normalization before validation acceptance
+- Rejected outputs are logged and never advanced for delivery
 
-```bash
-python -m venv venv
-```
+## Human Approval Workflow
 
-2. Activate (PowerShell):
+Delivery statuses:
 
-```bash
-venv\Scripts\Activate.ps1
-```
+- `GENERATED`
+- `PENDING_APPROVAL`
+- `APPROVED`
+- `REJECTED`
+- `DRY_RUN_SENT`
+- `SENT`
+- `FAILED`
 
-3. Install dependencies:
+Safety guardrails:
+
+- Unapproved emails cannot be sent
+- Rejected content cannot be sent
+- Duplicate dry-run sends are blocked
+
+## Tech Stack
+
+- Frontend: Streamlit
+- Backend: FastAPI
+- Orchestration: LangGraph
+- LLM: Gemini 1.5 Flash
+- Database: SQLite + SQLAlchemy
+- Validation: Pydantic
+- Data processing: pandas
+
+## Setup Instructions
+
+1. Create and activate a virtual environment.
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Configure environment:
+3. Copy environment template:
 
 ```bash
 copy .env.example .env
 ```
 
-Set `GEMINI_API_KEY` in `.env` before calling AI endpoints.
+4. Set `GEMINI_API_KEY` in `.env`.
 
-## Run Backend
+## Run Locally
+
+Backend:
 
 ```bash
 python -m uvicorn app.main:app --app-dir backend --reload
 ```
 
-Health endpoint: `http://localhost:8000/health`
-
-## Run Frontend
+Frontend:
 
 ```bash
 python -m streamlit run frontend/streamlit_app.py
 ```
 
-## Smoke / Test Commands
+Or use helper scripts:
 
-Workflow smoke test:
+- [scripts/run_backend.ps1](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/scripts/run_backend.ps1)
+- [scripts/run_frontend.ps1](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/scripts/run_frontend.ps1)
+
+## Environment Variables
+
+See [.env.example](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/.env.example) for full list.
+
+Important variables:
+
+- `DATABASE_URL`
+- `BACKEND_URL`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL_NAME`
+- `GEMINI_TIMEOUT_SECONDS`
+- `GEMINI_MAX_RETRIES`
+
+## API Overview
+
+Core:
+
+- `/invoices/*`
+- `/workflows/*`
+- `/audit`
+
+AI:
+
+- `/ai/generate/{invoice_id}`
+- `/ai/generate-overdue-batch`
+- `/ai/generated-preview/{invoice_id}`
+
+Delivery:
+
+- `/delivery/approve/{invoice_id}`
+- `/delivery/reject/{invoice_id}`
+- `/delivery/dry-run-send/{invoice_id}`
+- `/delivery/regenerate/{invoice_id}`
+- `/delivery/status/{invoice_id}`
+- `/delivery/pending-approvals`
+- `/delivery/summary`
+
+Orchestration:
+
+- `/orchestration/run/{invoice_id}`
+- `/orchestration/resume/{invoice_id}`
+- `/orchestration/trace/{invoice_id}`
+- `/orchestration/status/{invoice_id}`
+
+## Streamlit Dashboard Overview
+
+- Dashboard metrics and workflow processor
+- Workflow stage filtering and legal escalation highlighting
+- AI preview generation and validation indicators
+- Delivery governance queue and status controls
+- Orchestration run/resume/status/trace timeline viewer
+- Audit log explorer
+
+## Deployment Readiness
+
+- Dockerfile: [Dockerfile](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/Dockerfile)
+- Docker Compose: [docker-compose.yml](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docker-compose.yml)
+
+Run with Docker:
 
 ```bash
-python backend/scripts/workflow_smoke_test.py --base-url http://localhost:8000 --cleanup
+docker compose up --build
 ```
 
-Unit tests:
+## Demo Assets and Walkthrough
 
-```bash
-python -m pytest -q
-```
+- Demo flow: [docs/demo_flow.md](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docs/demo_flow.md)
+- Presentation notes: [docs/presentation_notes.md](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docs/presentation_notes.md)
+- Demo dataset: [data/demo/demo_invoices.csv](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/data/demo/demo_invoices.csv)
+- Sample outputs: `docs/sample_outputs/`
+
+## Screenshots
+
+Place screenshots and optional GIFs in `docs/assets/` using these names:
+
+- `dashboard.png`
+- `ai_preview.png`
+- `delivery_queue.png`
+- `orchestration_trace.png`
+- `dry_run_send.png`
+
+Then include them in this section for final submission.
+
+## Future Improvements
+
+- SMTP provider integration (with approval gate retained)
+- Persistent orchestration state store (Redis/Postgres)
+- Role-based access controls
+- Notification and SLA monitoring
+- CI pipeline for automated regression tests

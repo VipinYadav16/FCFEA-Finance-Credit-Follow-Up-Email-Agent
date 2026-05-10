@@ -1,0 +1,13 @@
+{
+  "invoice_id": "DEMO-STAGE3-001",
+  "model_name": "gemini-1.5-flash",
+  "prompt_version": "v1.1",
+  "stage_prompt_name": "stage_3.txt",
+  "validation_passed": true,
+  "output": {
+    "subject": "Action Requested: Overdue Invoice DEMO-STAGE3-001",
+    "email_body": "Dear BluePeak Manufacturing Team,\n\nThis is a professional follow-up regarding invoice DEMO-STAGE3-001 for 4200.50, due on 2026-04-20.\n\nThe invoice remains outstanding, and we request your payment status update at your earliest convenience.\n\nPlease confirm the expected settlement timeline.\n\nRegards,\nFinance Team",
+    "tone_used": "firm professional reminder",
+    "escalation_stage": "STAGE_3"
+  }
+}

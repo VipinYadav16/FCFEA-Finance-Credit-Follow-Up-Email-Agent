@@ -6,7 +6,9 @@ __pycache__/
 *.egg-info/
 .env
 .venv/
+**/.venv/
 venv/
+**/venv/
 .envrc
 .pytest_cache/
 .mypy_cache/
@@ -15,6 +17,7 @@ venv/
 .DS_Store
 logs/*.log
 *.db
+data/demo/*.sqlite
 .vscode/
 .idea/
 *.swp

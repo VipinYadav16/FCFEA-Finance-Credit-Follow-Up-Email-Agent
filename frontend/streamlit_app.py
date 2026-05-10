@@ -8,6 +8,20 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 st.set_page_config(page_title="Finance Credit Follow-Up Email Agent", layout="wide")
 
 
+def status_badge(label: str, kind: str = "info") -> None:
+    colors = {
+        "info": "#1d4ed8",
+        "success": "#15803d",
+        "warning": "#b45309",
+        "danger": "#b91c1c",
+    }
+    color = colors.get(kind, colors["info"])
+    st.markdown(
+        f"<span style='display:inline-block;padding:4px 10px;border-radius:999px;background:{color};color:#ffffff;font-size:12px'>{label}</span>",
+        unsafe_allow_html=True,
+    )
+
+
 def fetch_invoices() -> tuple[list[dict], str | None]:
     try:
         response = requests.get(f"{BACKEND_URL}/invoices", timeout=10)
@@ -220,6 +234,7 @@ if st.sidebar.button("Test Health Endpoint"):
 
 st.title("Finance Credit Follow-Up Email Agent")
 st.markdown("**Status**: Deterministic workflow + hardened AI communication layer")
+status_badge("Default Delivery Mode: DRY_RUN", "success")
 
 invoices, error = fetch_invoices()
 overdue_invoices, overdue_error = fetch_workflow_overdue()
@@ -235,6 +250,7 @@ if escalated_error:
     st.warning(f"Workflow escalated fetch failed: {escalated_error}")
 
 if page == "Dashboard":
+    st.subheader("Operations Snapshot")
     render_metrics(invoices, overdue_invoices, escalated_invoices)
     st.divider()
 
@@ -256,12 +272,14 @@ if page == "Dashboard":
         st.info("No invoices available yet.")
 elif page == "Invoices":
     st.subheader("Invoice List")
+    status_badge("API-driven data view", "info")
     if invoices:
         st.dataframe(invoices, use_container_width=True)
     else:
         st.info("No invoices available yet.")
 elif page == "Workflows":
     st.subheader("Workflow Overview")
+    status_badge("Deterministic Escalation Engine", "success")
     render_metrics(invoices, overdue_invoices, escalated_invoices)
     st.divider()
 
@@ -289,6 +307,7 @@ elif page == "Workflows":
     if legal_error:
         st.warning(f"Legal escalation fetch failed: {legal_error}")
     elif legal_invoices:
+        status_badge("Manual Review Required", "warning")
         st.warning("Legal escalation requires immediate review.")
         st.dataframe(legal_invoices, use_container_width=True)
     else:
@@ -296,6 +315,7 @@ elif page == "Workflows":
 else:
     if page == "AI Previews":
         st.subheader("AI Email Preview Panel")
+        status_badge("Structured + Validated AI Output", "info")
         overdue_ids = [inv.get("invoice_id") for inv in overdue_invoices if inv.get("invoice_id")]
         if not overdue_ids:
             st.info("No overdue invoices available for AI preview generation.")
@@ -307,8 +327,10 @@ else:
                     result, err = generate_ai_email(selected_invoice_id)
                     if err:
                         st.error(f"AI generation failed: {err}")
+                        status_badge("Generation Failed", "danger")
                     elif result:
                         st.success("AI preview generated successfully.")
+                        status_badge("Generation Succeeded", "success")
                         if result.get("validation_passed"):
                             st.info(
                                 f"Validation: passed | Latency: {result.get('generation_latency_ms')} ms | Prompt: {result.get('prompt_version')}"
@@ -351,6 +373,7 @@ else:
                     st.json(batch_result)
     elif page == "Delivery":
         st.subheader("Delivery Governance")
+        status_badge("Human Approval Gate Enabled", "warning")
         summary, summary_err = fetch_delivery_summary()
         if summary_err:
             st.warning(f"Delivery summary fetch failed: {summary_err}")
@@ -414,6 +437,7 @@ else:
                 st.json(status_data)
     elif page == "Orchestration":
         st.subheader("LangGraph Orchestration")
+        status_badge("Traceable Stateful Coordination", "info")
         selectable = [inv.get("invoice_id") for inv in invoices if inv.get("invoice_id")]
         if not selectable:
             st.info("No invoices available for orchestration.")
