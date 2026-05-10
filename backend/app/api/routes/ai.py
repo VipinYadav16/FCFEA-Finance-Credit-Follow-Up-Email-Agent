@@ -20,6 +20,18 @@ from app.utils.exceptions import (
 router = APIRouter()
 
 
+def _is_quota_or_rate_limited(message: str) -> bool:
+    normalized = message.lower()
+    signals = [
+        "quota",
+        "rate limit",
+        "429",
+        "resourceexhausted",
+        "too many requests",
+    ]
+    return any(token in normalized for token in signals)
+
+
 @router.post("/generate/{invoice_id}", response_model=AIEmailGenerationResponse)
 def generate_invoice_email(invoice_id: str, db: Session = Depends(get_db)) -> AIEmailGenerationResponse:
     try:
@@ -29,6 +41,11 @@ def generate_invoice_email(invoice_id: str, db: Session = Depends(get_db)) -> AI
     except (AIOutputValidationError, PromptLoadError) as exc:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
     except AIProviderError as exc:
+        if _is_quota_or_rate_limited(str(exc)):
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="AI provider quota/rate limit reached. Retry later or use another provider key.",
+            ) from exc
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
     except DatabaseError as exc:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)) from exc

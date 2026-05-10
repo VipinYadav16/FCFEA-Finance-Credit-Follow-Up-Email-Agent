@@ -1,6 +1,6 @@
-invoice_id,client_name,client_email,amount_due,due_date,follow_up_count,current_stage,payment_status
-DEMO-STAGE1-001,Northwind Retail,finance@northwind.example,950.00,2026-05-08,0,STAGE_1,PENDING
-DEMO-STAGE3-001,BluePeak Manufacturing,ap@bluepeak.example,4200.50,2026-04-20,2,STAGE_3,PENDING
-DEMO-STAGE4-001,Axis Commercial,accounts@axis.example,7800.00,2026-04-12,3,STAGE_4,PENDING
-DEMO-LEGAL-001,Vertex Logistics,billing@vertex.example,12500.00,2026-03-20,4,LEGAL_ESCALATION,ESCALATED
-DEMO-NOT-OVERDUE-001,Greenline Services,ar@greenline.example,600.00,2026-05-15,0,STAGE_1,PENDING
+"invoice_id","client_name","client_email","amount_due","due_date","follow_up_count","current_stage","payment_status"
+"DEMO-LEGAL-001","Vertex Logistics","billing@vertex.example","12500.00","2026-03-20","4","LEGAL_ESCALATION","ESCALATED"
+"DEMO-NOT-OVERDUE-001","Greenline Services","ar@greenline.example","600.00","2026-05-15","0","STAGE_1","PENDING"
+"DEMO-STAGE1-001","Northwind Retail","finance@northwind.example","950.00","2026-05-08","0","STAGE_1","PENDING"
+"DEMO-STAGE3-001","BluePeak Manufacturing","ap@bluepeak.example","4200.50","2026-04-20","2","STAGE_3","PENDING"
+"DEMO-STAGE4-001","Axis Commercial","accounts@axis.example","7800.00","2026-04-12","3","STAGE_4","PENDING"

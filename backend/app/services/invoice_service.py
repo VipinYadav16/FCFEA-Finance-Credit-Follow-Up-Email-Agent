@@ -41,7 +41,7 @@ def create_invoice(db: Session, payload: CreateInvoiceRequest) -> Invoice:
 
 
 def get_all_invoices(db: Session) -> list[Invoice]:
-    return db.query(Invoice).order_by(Invoice.due_date.asc()).all()
+    return db.query(Invoice).order_by(Invoice.invoice_id.asc()).all()
 
 
 def get_invoice_by_invoice_id(db: Session, invoice_id: str) -> Invoice:
