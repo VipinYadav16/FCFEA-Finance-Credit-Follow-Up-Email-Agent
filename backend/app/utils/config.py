@@ -18,10 +18,15 @@ class Settings(BaseSettings):
     database_url: str = DEFAULT_DB_URL
     log_level: str = "INFO"
     log_file: str = DEFAULT_LOG_FILE
+    openai_api_key: str | None = None
+    openai_model_name: str = "gpt-4o-mini"
+    openai_timeout_seconds: int = 20
+    openai_max_retries: int = 1
+    # Backward compatibility for existing .env files; no longer used by provider logic.
     gemini_api_key: str | None = None
-    gemini_model_name: str = "gemini-1.5-flash"
-    gemini_timeout_seconds: int = 20
-    gemini_max_retries: int = 1
+    gemini_model_name: str | None = None
+    gemini_timeout_seconds: int | None = None
+    gemini_max_retries: int | None = None
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

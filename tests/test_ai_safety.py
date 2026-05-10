@@ -31,7 +31,7 @@ def test_sanitize_prompt_field_redacts_injection_phrase() -> None:
 def test_validate_ai_output_accepts_valid_output() -> None:
     output = AIEmailOutput(
         subject="Reminder: Invoice INV-1001",
-        email_body="Dear Acme Corp,\nInvoice INV-1001 remains due for 1200.00. Please share payment timeline.\nRegards.",
+        email_body="Dear Acme Corp,\nInvoice INV-1001 remains due for 1200.00 with due date 2026-05-01. Please share payment timeline.\nRegards.",
         tone_used="professional reminder",
         escalation_stage=EscalationStage.STAGE_2,
     )
