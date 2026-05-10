@@ -1,11 +1,5 @@
 # Finance Credit Follow-Up Email Agent
 
-![Python](https://img.shields.io/badge/Python-3.12-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.38-FF4B4B)
-![LangGraph](https://img.shields.io/badge/LangGraph-0.2.39-4B0082)
-![Gemini](https://img.shields.io/badge/Gemini-1.5%20Flash-4285F4)
-
 Enterprise-style AI-powered platform for finance credit follow-up operations with deterministic workflow governance, constrained AI communication, human approval controls, dry-run execution, and LangGraph-based orchestration tracing.
 
 ## Business Problem
