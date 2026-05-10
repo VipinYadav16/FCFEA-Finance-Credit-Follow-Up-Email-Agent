@@ -355,13 +355,7 @@ docker compose up --build
   - Forbidden phrase and unsafe language detection
   - Hallucination checks against invoice_id, amount, due_date, and stage
 
-#### Security Mitigations
-
-- Full graded security risk mitigation table is included in the next section.
-
-## Security Risk Mitigation
-
-This section is mandatory and included explicitly for security evaluation.
+#### Security Risk Mitigation
 
 | Risk | Description | Mitigation Strategy |
 |---|---|---|
