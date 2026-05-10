@@ -1,12 +1,10 @@
 from datetime import date
 from decimal import Decimal
 
-import pytest
-
-from app.ai.safety import sanitize_prompt_field, validate_ai_output
+from app.ai.safety import sanitize_prompt_field
+from app.ai.validation import validate_ai_output
 from app.models.enums import EscalationStage, PaymentStatus
 from app.models.schemas import AIEmailOutput, WorkflowInvoiceContext
-from app.utils.exceptions import AIOutputValidationError
 
 
 def _context() -> WorkflowInvoiceContext:
@@ -37,15 +35,30 @@ def test_validate_ai_output_accepts_valid_output() -> None:
         tone_used="professional reminder",
         escalation_stage=EscalationStage.STAGE_2,
     )
-    validate_ai_output(output, _context())
+    result = validate_ai_output(output, _context())
+    assert result.is_valid is True
+    assert result.issues == []
 
 
 def test_validate_ai_output_rejects_stage_mismatch() -> None:
     output = AIEmailOutput(
-        subject="Reminder",
-        email_body="Invoice INV-1001 remains due for 1200.00.",
+        subject="Reminder: Invoice INV-1001",
+        email_body="Invoice INV-1001 remains due for 1200.00 and due date 2026-05-01.",
         tone_used="urgent",
         escalation_stage=EscalationStage.STAGE_3,
     )
-    with pytest.raises(AIOutputValidationError):
-        validate_ai_output(output, _context())
+    result = validate_ai_output(output, _context())
+    assert result.is_valid is False
+    assert any(issue.code == "stage_mismatch" for issue in result.issues)
+
+
+def test_validate_ai_output_rejects_forbidden_phrase() -> None:
+    output = AIEmailOutput(
+        subject="Final warning before lawsuit",
+        email_body="Invoice INV-1001 remains due for 1200.00 and due date 2026-05-01.",
+        tone_used="aggressive",
+        escalation_stage=EscalationStage.STAGE_2,
+    )
+    result = validate_ai_output(output, _context())
+    assert result.is_valid is False
+    assert any(issue.code == "forbidden_phrase" for issue in result.issues)

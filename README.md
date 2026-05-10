@@ -33,12 +33,31 @@ Workflow-first architecture for enterprise finance follow-up with deterministic 
 - AI output safety checks (stage consistency, deterministic field presence, unsafe-language screening)
 - Generated preview persistence (`generated_email_previews` table)
 
+## AI Hardening Scope (Step 4.5)
+
+- Modular AI validation layer (`backend/app/ai/validation.py`)
+  - required fields
+  - formatting checks
+  - forbidden phrase checks
+  - unsafe tone checks
+  - hallucination checks against deterministic context
+- Output sanitization and normalization (`backend/app/ai/sanitization.py`)
+- Evaluation helpers for consistency/completeness (`backend/app/ai/evaluation.py`)
+- Expanded observability:
+  - prompt version
+  - stage prompt name
+  - generation latency
+  - validation status/issues
+  - tone/completeness indicators
+- Centralized AI attempt audit logging through `/audit` (`AI_GENERATION_ATTEMPT`)
+
 ## AI Safety Boundaries
 
 - AI cannot control escalation, overdue logic, or workflow state decisions.
 - AI output is restricted to communication rendering.
 - Prompt policy prohibits fabricated penalties, legal threats, harassment, emotional manipulation, and invented invoice facts.
 - Deterministic context is injected as trusted business truth for generation.
+- AI output is rejected when validation rules fail.
 
 ## API Endpoints
 

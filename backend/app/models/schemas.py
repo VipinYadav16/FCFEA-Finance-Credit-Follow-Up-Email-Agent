@@ -117,10 +117,23 @@ class AIEmailOutput(BaseModel):
     escalation_stage: EscalationStage
 
 
+class AIValidationIssue(BaseModel):
+    code: str
+    message: str
+    severity: str = "error"
+
+
 class AIEmailGenerationResponse(BaseModel):
     invoice_id: str
     generated_at: datetime
     model_name: str
+    prompt_version: str
+    stage_prompt_name: str
+    generation_latency_ms: int
+    validation_passed: bool
+    validation_issues: list[AIValidationIssue]
+    tone_consistent: bool
+    output_complete: bool
     output: AIEmailOutput
 
 

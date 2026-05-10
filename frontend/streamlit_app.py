@@ -113,7 +113,7 @@ if st.sidebar.button("Test Health Endpoint"):
         st.sidebar.error(f"Backend not reachable: {exc}")
 
 st.title("Finance Credit Follow-Up Email Agent")
-st.markdown("**Status**: Deterministic workflow engine")
+st.markdown("**Status**: Deterministic workflow + hardened AI communication layer")
 
 invoices, error = fetch_invoices()
 overdue_invoices, overdue_error = fetch_workflow_overdue()
@@ -203,6 +203,18 @@ else:
                         st.error(f"AI generation failed: {err}")
                     elif result:
                         st.success("AI preview generated successfully.")
+                        if result.get("validation_passed"):
+                            st.info(
+                                f"Validation: passed | Latency: {result.get('generation_latency_ms')} ms | Prompt: {result.get('prompt_version')}"
+                            )
+                        else:
+                            st.warning("Validation reported issues.")
+                        if result.get("validation_issues"):
+                            st.write("Validation issues:")
+                            st.json(result.get("validation_issues"))
+                        st.caption(
+                            f"Tone consistent: {result.get('tone_consistent')} | Output complete: {result.get('output_complete')} | Stage prompt: {result.get('stage_prompt_name')}"
+                        )
                         st.json(result)
             with col_fetch:
                 if st.button("Fetch Latest Stored Preview"):
@@ -227,6 +239,9 @@ else:
                     st.success(
                         f"Batch complete: generated={batch_result.get('generated_count')} failed={batch_result.get('failed_count')}"
                     )
+                    failed_count = batch_result.get("failed_count", 0)
+                    if failed_count:
+                        st.warning("Some generations failed validation/provider checks.")
                     st.json(batch_result)
     else:
         st.subheader("Audit Logs")
