@@ -135,6 +135,13 @@ Or use helper scripts:
 
 - [scripts/run_backend.ps1](scripts/run_backend.ps1)
 - [scripts/run_frontend.ps1](scripts/run_frontend.ps1)
+- [scripts/run_all.ps1](scripts/run_all.ps1)
+
+Single-command run (bootstraps venvs if needed):
+
+```bash
+powershell -ExecutionPolicy Bypass -File scripts/run_all.ps1
+```
 
 ## Environment Variables
 
