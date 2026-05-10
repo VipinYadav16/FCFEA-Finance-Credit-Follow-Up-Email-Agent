@@ -1,4 +1,6 @@
 import os
+import csv
+import io
 
 import requests
 import streamlit as st
@@ -201,6 +203,76 @@ def orchestration_status(invoice_id: str) -> tuple[dict | None, str | None]:
         return None, str(exc)
 
 
+def upload_invoices_csv(uploaded_file) -> tuple[dict | None, str | None]:
+    try:
+        content = uploaded_file.getvalue().decode("utf-8")
+    except Exception as exc:  # noqa: BLE001
+        return None, f"Failed to read uploaded file: {exc}"
+
+    reader = csv.DictReader(io.StringIO(content))
+    required_columns = {
+        "invoice_id",
+        "client_name",
+        "client_email",
+        "amount_due",
+        "due_date",
+        "follow_up_count",
+    }
+    missing = sorted(required_columns - set(reader.fieldnames or []))
+    if missing:
+        return None, f"Missing required columns: {', '.join(missing)}"
+
+    created = 0
+    failed = 0
+    failures: list[dict] = []
+
+    for idx, row in enumerate(reader, start=2):
+        payload = {
+            "invoice_id": (row.get("invoice_id") or "").strip(),
+            "client_name": (row.get("client_name") or "").strip(),
+            "client_email": (row.get("client_email") or "").strip(),
+            "amount_due": (row.get("amount_due") or "").strip(),
+            "due_date": (row.get("due_date") or "").strip(),
+            "follow_up_count": int((row.get("follow_up_count") or "0").strip() or "0"),
+        }
+        current_stage = (row.get("current_stage") or "").strip()
+        payment_status = (row.get("payment_status") or "").strip()
+        last_followup_date = (row.get("last_followup_date") or "").strip()
+        if current_stage:
+            payload["current_stage"] = current_stage
+        if payment_status:
+            payload["payment_status"] = payment_status
+        if last_followup_date:
+            payload["last_followup_date"] = last_followup_date
+
+        try:
+            response = requests.post(f"{BACKEND_URL}/invoices", json=payload, timeout=10)
+            if response.status_code == 201:
+                created += 1
+            else:
+                failed += 1
+                failures.append(
+                    {
+                        "line": idx,
+                        "invoice_id": payload["invoice_id"],
+                        "status_code": response.status_code,
+                        "detail": response.text,
+                    }
+                )
+        except (requests.RequestException, ValueError) as exc:
+            failed += 1
+            failures.append(
+                {
+                    "line": idx,
+                    "invoice_id": payload["invoice_id"],
+                    "status_code": "request_error",
+                    "detail": str(exc),
+                }
+            )
+
+    return {"created": created, "failed": failed, "failures": failures}, None
+
+
 def render_metrics(invoices: list[dict], overdue: list[dict], escalated: list[dict]) -> None:
     total = len(invoices)
     overdue_count = len(overdue)
@@ -220,8 +292,18 @@ page = st.sidebar.selectbox(
     ["Dashboard", "Invoices", "Workflows", "AI Previews", "Delivery", "Orchestration", "Audit Logs"],
 )
 
-st.sidebar.subheader("Upload (Placeholder)")
-st.sidebar.file_uploader("Invoice CSV", type=["csv"], disabled=True)
+st.sidebar.subheader("Invoice Upload")
+uploaded_csv = st.sidebar.file_uploader("Invoice CSV", type=["csv"])
+if uploaded_csv is not None and st.sidebar.button("Upload Invoices"):
+    result, upload_error = upload_invoices_csv(uploaded_csv)
+    if upload_error:
+        st.sidebar.error(upload_error)
+    elif result:
+        st.sidebar.success(f"Upload complete: created={result['created']} failed={result['failed']}")
+        if result["failed"]:
+            st.sidebar.warning("Some rows failed. See details below.")
+            st.sidebar.json(result["failures"][:10])
+        st.rerun()
 
 st.sidebar.subheader("Backend Connectivity")
 if st.sidebar.button("Test Health Endpoint"):
