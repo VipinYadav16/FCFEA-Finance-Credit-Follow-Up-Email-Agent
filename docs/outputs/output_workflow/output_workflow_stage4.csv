@@ -1,0 +1,4 @@
+﻿invoice_id,client_name,client_email,amount_due,due_date,overdue_days,escalation_stage,payment_status,follow_up_count
+CSV-DEMO-010,TruBuild Infra,accounts@trubuild.example,15100.00,2026-04-10,30,STAGE_4,ESCALATED,5
+CSV-DEMO-007,UrbanCore Supplies,billing@urbancore.example,11737.72,2026-04-12,28,STAGE_4,ESCALATED,4
+CSV-DEMO-004,Vertex Logistics,billing@vertex.example,12500.00,2026-04-16,24,STAGE_4,ESCALATED,3

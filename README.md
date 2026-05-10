@@ -301,7 +301,9 @@ docker compose up --build
 
 - Demo dataset: [data/demo/demo_invoices.csv](data/demo/demo_invoices.csv)
 - Demo dataset: [data/demo/test_invoice_data.csv](data/demo/test_invoice_data.csv)
-- Sample outputs: `docs/sample_outputs/`
+- Captured demo outputs (CSV + JSON): `docs/outputs/`
+- AI preview outputs: `docs/outputs/output_aipreview/`
+- Workflow stage outputs: `docs/outputs/output_workflow/`
 
 ## Future Improvements
 

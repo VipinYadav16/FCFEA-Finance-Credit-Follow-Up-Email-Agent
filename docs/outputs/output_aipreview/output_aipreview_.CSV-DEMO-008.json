@@ -1,0 +1,18 @@
+{
+  "invoice_id": "CSV-DEMO-008",
+  "generated_at": "2026-05-10T17:58:24.238855Z",
+  "model_name": "gemini-2.5-flash-lite",
+  "prompt_version": "v1.1",
+  "stage_prompt_name": "stage_2.txt",
+  "generation_latency_ms": 1436,
+  "validation_passed": true,
+  "validation_issues": [],
+  "tone_consistent": true,
+  "output_complete": true,
+  "output": {
+    "subject": "Follow-up: Invoice CSV-DEMO-008 - Overdue Payment",
+    "email_body": "Dear Pinnacle MedTech,\n\nThis is a follow-up regarding invoice CSV-DEMO-008, which was due on 2026-05-03. Our records indicate that the payment of $2530.25 is currently pending and is 7 days overdue.\n\nWe understand that oversights can happen, and we would appreciate it if you could provide an update on the status of this payment and your expected settlement date.\n\nThank you for your prompt attention to this matter.\n\nSincerely,\n[Your Company Name]",
+    "tone_used": "professional reminder with mild urgency",
+    "escalation_stage": "STAGE_2"
+  }
+}

@@ -1,0 +1,7 @@
+﻿node,status,timestamp,duration_ms,message,metadata
+fetch_invoice,SUCCESS,2026-05-10T18:02:04.041791Z,1,,"{""escalation_stage"":""STAGE_1""}"
+workflow_processing,SUCCESS,2026-05-10T18:02:04.050928Z,8,,"{""processed_count"":12,""updated_count"":0}"
+ai_generation,SUCCESS,2026-05-10T18:02:06.139781Z,2091,,"{""validation_passed"":true,""tone_consistent"":true}"
+ai_validation,SUCCESS,2026-05-10T18:02:06.139781Z,0,,
+preview_creation,SUCCESS,2026-05-10T18:02:06.139781Z,1,,
+approval_wait,PAUSED_PENDING_APPROVAL,2026-05-10T18:02:06.139781Z,2,,

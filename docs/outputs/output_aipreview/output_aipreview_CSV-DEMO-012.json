@@ -1,0 +1,18 @@
+{
+  "invoice_id": "CSV-DEMO-012",
+  "generated_at": "2026-05-10T17:36:35.945611Z",
+  "model_name": "gemini-2.5-flash-lite",
+  "prompt_version": "v1.1",
+  "stage_prompt_name": "stage_3.txt",
+  "generation_latency_ms": 1623,
+  "validation_passed": true,
+  "validation_issues": [],
+  "tone_consistent": true,
+  "output_complete": true,
+  "output": {
+    "subject": "Follow-up: Invoice CSV-DEMO-012 - Action Required",
+    "email_body": "Dear Quantum Nexus,\n\nThis is a follow-up regarding invoice CSV-DEMO-012, which was due on 2026-04-28. The outstanding amount is $4680.90.\n\nAs the invoice is now 12 days overdue and payment status is PENDING, we require your immediate attention to this matter. Please provide an update on the payment status or confirm when we can expect to receive the payment.\n\nWe appreciate your prompt cooperation.\n\nSincerely,\n[Your Company Name]",
+    "tone_used": "firm and professional",
+    "escalation_stage": "STAGE_3"
+  }
+}

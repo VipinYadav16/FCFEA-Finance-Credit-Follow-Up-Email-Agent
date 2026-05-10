@@ -1,0 +1,18 @@
+{
+  "invoice_id": "CSV-DEMO-002",
+  "generated_at": "2026-05-10T17:57:29.056969Z",
+  "model_name": "gemini-2.5-flash-lite",
+  "prompt_version": "v1.1",
+  "stage_prompt_name": "stage_2.txt",
+  "generation_latency_ms": 1669,
+  "validation_passed": true,
+  "validation_issues": [],
+  "tone_consistent": true,
+  "output_complete": true,
+  "output": {
+    "subject": "Follow-up: Invoice CSV-DEMO-002 - Overdue Payment",
+    "email_body": "Dear BluePeak Manufacturing,\n\nThis is a follow-up regarding invoice CSV-DEMO-002, which was due on 2026-05-01. Our records indicate that the payment of $4200.50 is currently pending and is now 9 days overdue.\n\nWe understand that oversights can happen. Could you please provide an update on the status of this payment and an estimated settlement date?\n\nThank you for your prompt attention to this matter.\n\nSincerely,\n[Your Company Name]",
+    "tone_used": "professional reminder with mild urgency",
+    "escalation_stage": "STAGE_2"
+  }
+}

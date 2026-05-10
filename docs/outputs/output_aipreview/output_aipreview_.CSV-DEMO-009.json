@@ -1,0 +1,18 @@
+{
+  "invoice_id": "CSV-DEMO-009",
+  "generated_at": "2026-05-10T17:56:31.504851Z",
+  "model_name": "gemini-2.5-flash-lite",
+  "prompt_version": "v1.1",
+  "stage_prompt_name": "stage_3.txt",
+  "generation_latency_ms": 2171,
+  "validation_passed": true,
+  "validation_issues": [],
+  "tone_consistent": true,
+  "output_complete": true,
+  "output": {
+    "subject": "Follow-Up: Invoice CSV-DEMO-009 - Action Required",
+    "email_body": "Dear Harborline Energy,\n\nThis is our second follow-up regarding invoice CSV-DEMO-009, which was due on 2026-04-20. The outstanding amount is $9825.00.\n\nAs the invoice is now 20 days past due, we require your immediate attention to this matter. Please provide a status update on the payment at your earliest convenience.\n\nWe appreciate your prompt cooperation.\n\nSincerely,\n[Your Company Name]",
+    "tone_used": "firm and professional",
+    "escalation_stage": "STAGE_3"
+  }
+}
