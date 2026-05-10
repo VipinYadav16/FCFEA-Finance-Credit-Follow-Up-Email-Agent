@@ -268,7 +268,7 @@ Orchestration:
 
 ### Workflows
 
-![Workflows](docs/assets/dashboard.png)
+![Workflows](docs/assets/workflow.png)
 
 ### AI Preview
 
@@ -303,18 +303,6 @@ docker compose up --build
 - Presentation notes: [docs/presentation_notes.md](docs/presentation_notes.md)
 - Demo dataset: [data/demo/demo_invoices.csv](data/demo/demo_invoices.csv)
 - Sample outputs: `docs/sample_outputs/`
-
-## Screenshots
-
-Place screenshots and optional GIFs in `docs/assets/` using these names:
-
-- `dashboard.png`
-- `ai_preview.png`
-- `delivery_queue.png`
-- `orchestration_trace.png`
-- `dry_run_send.png`
-
-Then include them in this section for final submission.
 
 ## Future Improvements
 
