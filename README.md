@@ -87,7 +87,7 @@ Safety guardrails:
 - Frontend: Streamlit
 - Backend: FastAPI
 - Orchestration: LangGraph
-- LLM: Gemini 1.5 Flash
+- LLM: OpenAI (gpt-4o-mini default)
 - Database: SQLite + SQLAlchemy
 - Validation: Pydantic
 - Data processing: pandas
@@ -107,7 +107,7 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-4. Set `GEMINI_API_KEY` in `.env`.
+4. Set `OPENAI_API_KEY` in `.env`.
 
 ## Run Locally
 
@@ -144,10 +144,10 @@ Important variables:
 
 - `DATABASE_URL`
 - `BACKEND_URL`
-- `GEMINI_API_KEY`
-- `GEMINI_MODEL_NAME`
-- `GEMINI_TIMEOUT_SECONDS`
-- `GEMINI_MAX_RETRIES`
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL_NAME`
+- `OPENAI_TIMEOUT_SECONDS`
+- `OPENAI_MAX_RETRIES`
 
 ## API Overview
 
