@@ -27,3 +27,18 @@ class WorkflowProcessingError(AppError):
 class InvalidWorkflowStateError(AppError):
     def __init__(self, message: str) -> None:
         super().__init__(message)
+
+
+class AIProviderError(AppError):
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class AIOutputValidationError(AppError):
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class PromptLoadError(AppError):
+    def __init__(self, message: str) -> None:
+        super().__init__(message)

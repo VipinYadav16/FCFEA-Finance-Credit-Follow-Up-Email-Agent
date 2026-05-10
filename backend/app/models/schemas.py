@@ -108,3 +108,41 @@ class WorkflowRunSummary(BaseModel):
     duration_seconds: float
     stage_counts: dict[str, int]
     updated_invoices: list[WorkflowInvoiceContext]
+
+
+class AIEmailOutput(BaseModel):
+    subject: str = Field(..., min_length=3, max_length=255)
+    email_body: str = Field(..., min_length=30, max_length=5000)
+    tone_used: str = Field(..., min_length=3, max_length=100)
+    escalation_stage: EscalationStage
+
+
+class AIEmailGenerationResponse(BaseModel):
+    invoice_id: str
+    generated_at: datetime
+    model_name: str
+    output: AIEmailOutput
+
+
+class AIBatchGenerateRequest(BaseModel):
+    limit: int = Field(20, ge=1, le=200, description="Max overdue invoices to generate preview for")
+
+
+class AIBatchGenerateResponse(BaseModel):
+    generated_count: int
+    failed_count: int
+    items: list[AIEmailGenerationResponse]
+    failures: list[dict[str, str]]
+
+
+class GeneratedEmailPreviewResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    invoice_id: str
+    escalation_stage: EscalationStage
+    tone_used: str
+    subject: str
+    email_body: str
+    content_summary: str
+    generated_at: datetime

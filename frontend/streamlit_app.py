@@ -53,6 +53,37 @@ def fetch_audit_logs(limit: int) -> tuple[list[dict], str | None]:
         return [], str(exc)
 
 
+def generate_ai_email(invoice_id: str) -> tuple[dict | None, str | None]:
+    try:
+        response = requests.post(f"{BACKEND_URL}/ai/generate/{invoice_id}", timeout=25)
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
+def fetch_ai_preview(invoice_id: str) -> tuple[dict | None, str | None]:
+    try:
+        response = requests.get(f"{BACKEND_URL}/ai/generated-preview/{invoice_id}", timeout=10)
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
+def generate_ai_batch(limit: int) -> tuple[dict | None, str | None]:
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/ai/generate-overdue-batch",
+            json={"limit": limit},
+            timeout=60,
+        )
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
 def render_metrics(invoices: list[dict], overdue: list[dict], escalated: list[dict]) -> None:
     total = len(invoices)
     overdue_count = len(overdue)
@@ -67,7 +98,7 @@ def render_metrics(invoices: list[dict], overdue: list[dict], escalated: list[di
 
 
 st.sidebar.title("Navigation")
-page = st.sidebar.selectbox("Go to", ["Dashboard", "Invoices", "Workflows", "Audit Logs"])
+page = st.sidebar.selectbox("Go to", ["Dashboard", "Invoices", "Workflows", "AI Previews", "Audit Logs"])
 
 st.sidebar.subheader("Upload (Placeholder)")
 st.sidebar.file_uploader("Invoice CSV", type=["csv"], disabled=True)
@@ -157,14 +188,55 @@ elif page == "Workflows":
     else:
         st.info("No legal escalations.")
 else:
-    st.subheader("Audit Logs")
-    log_limit = st.slider("Logs to fetch", min_value=10, max_value=500, value=100, step=10)
-    audit_logs, audit_error = fetch_audit_logs(log_limit)
-    if audit_error:
-        st.warning(f"Audit log fetch failed: {audit_error}")
-    elif audit_logs:
-        st.dataframe(audit_logs, use_container_width=True)
+    if page == "AI Previews":
+        st.subheader("AI Email Preview Panel")
+        overdue_ids = [inv.get("invoice_id") for inv in overdue_invoices if inv.get("invoice_id")]
+        if not overdue_ids:
+            st.info("No overdue invoices available for AI preview generation.")
+        else:
+            selected_invoice_id = st.selectbox("Select overdue invoice", overdue_ids)
+            col_gen, col_fetch = st.columns(2)
+            with col_gen:
+                if st.button("Generate Preview for Selected Invoice"):
+                    result, err = generate_ai_email(selected_invoice_id)
+                    if err:
+                        st.error(f"AI generation failed: {err}")
+                    elif result:
+                        st.success("AI preview generated successfully.")
+                        st.json(result)
+            with col_fetch:
+                if st.button("Fetch Latest Stored Preview"):
+                    preview, err = fetch_ai_preview(selected_invoice_id)
+                    if err:
+                        st.error(f"Preview fetch failed: {err}")
+                    elif preview:
+                        st.subheader(preview.get("subject", "Generated Subject"))
+                        st.caption(
+                            f"Stage: {preview.get('escalation_stage')} | Tone: {preview.get('tone_used')} | Generated: {preview.get('generated_at')}"
+                        )
+                        st.text_area("Generated Email Body", preview.get("email_body", ""), height=260)
+
+            st.divider()
+            st.subheader("Batch Generation (Overdue)")
+            batch_limit = st.slider("Batch size", min_value=1, max_value=50, value=10, step=1)
+            if st.button("Generate Batch Previews"):
+                batch_result, batch_err = generate_ai_batch(batch_limit)
+                if batch_err:
+                    st.error(f"Batch generation failed: {batch_err}")
+                elif batch_result:
+                    st.success(
+                        f"Batch complete: generated={batch_result.get('generated_count')} failed={batch_result.get('failed_count')}"
+                    )
+                    st.json(batch_result)
     else:
-        st.info("No audit logs available.")
+        st.subheader("Audit Logs")
+        log_limit = st.slider("Logs to fetch", min_value=10, max_value=500, value=100, step=10)
+        audit_logs, audit_error = fetch_audit_logs(log_limit)
+        if audit_error:
+            st.warning(f"Audit log fetch failed: {audit_error}")
+        elif audit_logs:
+            st.dataframe(audit_logs, use_container_width=True)
+        else:
+            st.info("No audit logs available.")
 
 st.caption(f"Current view: {page}")

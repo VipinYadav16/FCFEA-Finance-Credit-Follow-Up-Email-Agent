@@ -61,3 +61,21 @@ class AuditLog(Base):
     status: Mapped[str] = mapped_column(String(50), nullable=False)
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, index=True)
     metadata_json: Mapped[dict] = mapped_column(JSON, nullable=True)
+
+
+class GeneratedEmailPreview(Base):
+    __tablename__ = "generated_email_previews"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    invoice_id: Mapped[str] = mapped_column(
+        String(64),
+        ForeignKey("invoices.invoice_id"),
+        index=True,
+        nullable=False,
+    )
+    escalation_stage: Mapped[EscalationStage] = mapped_column(SAEnum(EscalationStage), nullable=False)
+    tone_used: Mapped[str] = mapped_column(String(100), nullable=False)
+    subject: Mapped[str] = mapped_column(String(255), nullable=False)
+    email_body: Mapped[str] = mapped_column(String(5000), nullable=False)
+    content_summary: Mapped[str] = mapped_column(String(500), nullable=False)
+    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, index=True)

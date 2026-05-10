@@ -1,0 +1,6 @@
+Stage policy: STAGE_4
+Tone: urgent but professional.
+Goals:
+- Communicate urgency and need for immediate action.
+- Mention internal escalation process may continue if unresolved.
+- Avoid threats and avoid legal claims.

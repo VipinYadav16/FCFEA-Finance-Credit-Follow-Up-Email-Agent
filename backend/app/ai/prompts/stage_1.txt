@@ -1,0 +1,6 @@
+Stage policy: STAGE_1
+Tone: polite, friendly, assumes oversight.
+Goals:
+- Gentle reminder for overdue payment.
+- Thank client for partnership.
+- Request confirmation on payment timeline.

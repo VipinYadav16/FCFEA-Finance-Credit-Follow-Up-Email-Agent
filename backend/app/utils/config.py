@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     database_url: str = DEFAULT_DB_URL
     log_level: str = "INFO"
     log_file: str = DEFAULT_LOG_FILE
+    gemini_api_key: str | None = None
+    gemini_model_name: str = "gemini-1.5-flash"
+    gemini_timeout_seconds: int = 20
+    gemini_max_retries: int = 1
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

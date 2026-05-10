@@ -1,72 +1,75 @@
 # Finance Credit Follow-Up Email Agent
 
-Workflow-first architecture for AI-assisted finance credit follow-up.
+Workflow-first architecture for enterprise finance follow-up with deterministic workflow logic and controlled AI communication.
 
-## Structure
+## Current Architecture
 
-- backend/: FastAPI app (API-first)
-- frontend/: Streamlit UI
-- data/: local data and SQLite db
-- logs/: application logs
+- API layer: FastAPI routes under `backend/app/api`
+- Service layer: domain services under `backend/app/services`
+- Workflow layer: deterministic escalation engine under `backend/app/workflows`
+- AI communication layer: provider abstraction, prompt files, and validation under `backend/app/ai`
+- Data layer: SQLAlchemy ORM and SQLite under `backend/app/models` and `backend/app/db`
+- UI layer: Streamlit API-driven dashboard under `frontend/`
 
-## Architecture (Step 2)
+## Deterministic Workflow Scope (Completed)
 
-- API layer: FastAPI routes under backend/app/api
-- Service layer: reusable business services under backend/app/services
-- Database layer: SQLAlchemy models and sessions under backend/app/models and backend/app/db
-- Utility layer: shared helpers under backend/app/utils
+- Overdue invoice processing and escalation stage assignment
+- Stage transition audit logging
+- Workflow summaries and stage-based filters
+- Smoke script for workflow stabilization
 
-## Current Features
+## AI Communication Layer Scope (Step 4)
 
-- Invoice domain models and validation
-- CRUD endpoints for invoices
-- Overdue calculations in API responses
-- Audit log access for workflow events
-- Deterministic workflow engine for escalation staging
-- Streamlit workflow dashboard (API-driven)
+- Gemini integration via provider abstraction (`BaseAIProvider`, `GeminiProvider`)
+- Externalized prompt architecture:
+  - `system_prompt.txt`
+  - `stage_1.txt`
+  - `stage_2.txt`
+  - `stage_3.txt`
+  - `stage_4.txt`
+  - `legal_escalation.txt`
+- Structured output schema validation (`AIEmailOutput`)
+- Prompt injection mitigation through field sanitization
+- AI output safety checks (stage consistency, deterministic field presence, unsafe-language screening)
+- Generated preview persistence (`generated_email_previews` table)
 
-## Workflow Engine (Step 3)
+## AI Safety Boundaries
 
-Deterministic escalation staging is calculated from invoice overdue days. The workflow engine updates
-`current_stage` and writes audit logs for stage transitions.
+- AI cannot control escalation, overdue logic, or workflow state decisions.
+- AI output is restricted to communication rendering.
+- Prompt policy prohibits fabricated penalties, legal threats, harassment, emotional manipulation, and invented invoice facts.
+- Deterministic context is injected as trusted business truth for generation.
 
-Escalation rules:
+## API Endpoints
 
-- 1-7 days overdue: STAGE_1
-- 8-14 days overdue: STAGE_2
-- 15-21 days overdue: STAGE_3
-- 22-30 days overdue: STAGE_4
-- 31+ days overdue: LEGAL_ESCALATION
+### Core
 
-Workflow processing flow:
+- `POST /invoices`
+- `GET /invoices`
+- `GET /invoices/{invoice_id}`
+- `PUT /invoices/{invoice_id}`
+- `DELETE /invoices/{invoice_id}`
+- `POST /workflows/process-overdue`
+- `GET /workflows/overdue`
+- `GET /workflows/escalated`
+- `GET /workflows/stage/{stage}`
+- `GET /audit`
 
-1. Fetch invoices ordered by due date.
-2. Skip non-overdue invoices.
-3. Determine escalation stage from overdue days.
-4. Update stage only when it changes.
-5. Write audit log entries for stage transitions.
+### AI Preview
 
-Observability highlights:
-
-- Workflow run summary returns processed, updated, skipped, error, overdue, escalated, and legal counts.
-- Stage distribution returned in `stage_counts` for quick dashboard validation.
-- Logs emit run start, per-escalation transitions, and run completion metrics.
-
-Audit logging structure:
-
-- `action_type`: `ESCALATION_STAGE_UPDATE`
-- `status`: `SUCCESS`
-- `metadata_json`: `previous_stage`, `new_stage`, `overdue_days`
+- `POST /ai/generate/{invoice_id}`
+- `POST /ai/generate-overdue-batch`
+- `GET /ai/generated-preview/{invoice_id}`
 
 ## Setup
 
-1. Create a virtual environment:
+1. Create virtual environment:
 
 ```bash
 python -m venv venv
 ```
 
-2. Activate the environment (Windows PowerShell):
+2. Activate (PowerShell):
 
 ```bash
 venv\Scripts\Activate.ps1
@@ -78,68 +81,38 @@ venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-4. Copy environment variables:
+4. Configure environment:
 
 ```bash
 copy .env.example .env
 ```
 
-## Run Backend
+Set `GEMINI_API_KEY` in `.env` before calling AI endpoints.
 
-From the project root:
+## Run Backend
 
 ```bash
 python -m uvicorn app.main:app --app-dir backend --reload
 ```
 
-Health check:
-
-```bash
-http://localhost:8000/health
-```
+Health endpoint: `http://localhost:8000/health`
 
 ## Run Frontend
-
-From the project root:
 
 ```bash
 python -m streamlit run frontend/streamlit_app.py
 ```
 
-## API Endpoints
+## Smoke / Test Commands
 
-- POST /invoices
-- GET /invoices
-- GET /invoices/{invoice_id}
-- PUT /invoices/{invoice_id}
-- DELETE /invoices/{invoice_id}
-- POST /workflows/process-overdue
-- GET /workflows/overdue
-- GET /workflows/escalated
-- GET /workflows/stage/{stage}
-- GET /audit
-
-## Smoke Testing
-
-Run the workflow smoke test (backend must be running):
+Workflow smoke test:
 
 ```bash
 python backend/scripts/workflow_smoke_test.py --base-url http://localhost:8000 --cleanup
 ```
 
-What it checks:
-
-- Escalation staging across all overdue ranges
-- Workflow processing endpoint stability
-- Audit log creation for escalations
-- Stage filtering endpoints
-
-## Database Initialization
-
-The SQLite database is created automatically on backend startup.
-
-Optional seed data:
+Unit tests:
 
 ```bash
-python backend/app/db/seed.py
+python -m pytest -q
 ```
