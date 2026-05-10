@@ -1,10 +1,10 @@
 # Finance Credit Follow-Up Email Agent
 
-Enterprise-style AI-powered platform for finance credit follow-up operations with deterministic workflow governance, constrained AI communication, human approval controls, dry-run execution, and LangGraph-based orchestration tracing.
+Enterprise style AI powered platform for finance credit follow-up operations with deterministic workflow governance, constrained AI communication, human approval controls, dry run execution, and LangGraph-based orchestration tracing.
 
 ## Business Problem
 
-Finance teams need consistent, auditable, and safe overdue payment follow-up workflows. Manual processes are hard to scale, difficult to govern, and often lack operational traceability.
+Finance teams need consistent, auditable, and safe overdue payment follow up workflows. Manual processes are hard to scale, difficult to govern, and often lack operational traceability.
 
 ## Key Features
 
@@ -147,7 +147,7 @@ Safety guardrails:
 - Frontend: Streamlit
 - Backend: FastAPI
 - Orchestration: LangGraph
-- LLM: OpenAI (gpt-4o-mini default)
+- LLM: Gemini 1.5 Flash
 - Database: SQLite + SQLAlchemy
 - Validation: Pydantic
 - Data processing: pandas
@@ -167,7 +167,7 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-4. Set `OPENAI_API_KEY` in `.env`.
+4. Set `GEMINI_API_KEY` in `.env`.
 
 ## Run Locally
 
@@ -211,10 +211,10 @@ Important variables:
 
 - `DATABASE_URL`
 - `BACKEND_URL`
-- `OPENAI_API_KEY`
-- `OPENAI_MODEL_NAME`
-- `OPENAI_TIMEOUT_SECONDS`
-- `OPENAI_MAX_RETRIES`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL_NAME`
+- `GEMINI_TIMEOUT_SECONDS`
+- `GEMINI_MAX_RETRIES`
 
 ## API Overview
 
@@ -312,3 +312,53 @@ docker compose up --build
 - Role-based access controls
 - Notification and SLA monitoring
 - CI pipeline for automated regression tests
+
+## Technical Stack and Decision Log
+
+### Mandatory Technical Disclosures
+
+#### LLM Chosen
+
+- Model: `Gemini 1.5 Flash`
+- Provider: `Google Gemini API`
+- Version/Identifier used in app config: `gemini-1.5-flash`
+- Why this model:
+  - Lower-latency generation suitable for operational follow-up workflows
+  - Cost-effective for repeated preview generation and batch usage
+  - Adequate instruction-following for structured JSON-style outputs
+  - Good fit for controlled communication tasks with strict validation gates
+
+#### Agent Framework
+
+- Framework: `LangGraph` (version pinned in requirements: `0.2.39`)
+- Architecture style:
+  - Stateful orchestration graph over deterministic service modules
+  - Plan-and-execute style node sequencing with explicit interruption points
+  - Single-orchestrator pattern (not multi-agent)
+- Flow artifacts:
+  - Graph lifecycle and node flow are documented in:
+    - `docs/architecture_diagrams.md` (LangGraph orchestration flow)
+    - `docs/demo_flow.md`
+
+#### Prompt Design
+
+- Prompt structure:
+  - Externalized prompts in `backend/app/ai/prompts/`
+  - One system prompt + stage-specific policy prompts
+- Key system prompt:
+  - File: `backend/app/ai/prompts/system_prompt.txt`
+  - Defines enterprise finance assistant role, safe communication scope, and forbidden behaviors
+- Guardrails applied:
+  - Prompt injection pattern sanitization for user-controlled fields
+  - Deterministic context injection from workflow data only
+  - Structured output schema validation via Pydantic
+  - Forbidden phrase and unsafe language detection
+
+#### Security Risk Mitigation
+
+| Risk | Description | Mitigation Strategy |
+|---|---|---|
+| Prompt Injection | Malicious input manipulating agent behaviour | Input sanitization for customer-controlled fields, structured output schemas, strict validation and reject on fail behavior |
+| API Key Exposure | LLM/email API keys leaked in code | `.env` + settings loader, no hardcoded keys, `.env` excluded via `.gitignore`, recommend secrets manager in production |
+| Unauthorised Access | Anyone triggering the agent endpoint | Add API auth (API key/OAuth) before external exposure, apply rate limiting and gateway protections in deployment |
+| Email Spoofing | Emails appearing from wrong sender | SPF/DKIM/DMARC with verified sender domain for real sending phase; keep dry-run mode as default in current testing phase |
