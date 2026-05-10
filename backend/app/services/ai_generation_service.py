@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.ai.evaluation import evaluate_output_completeness, evaluate_tone_consistency
 from app.ai.prompt_loader import load_stage_prompt, load_system_prompt
+from app.ai.providers.gemini_provider import GeminiProvider
 from app.ai.providers.openai_provider import OpenAIProvider
 from app.ai.safety import build_user_prompt
 from app.ai.sanitization import sanitize_generated_output_text
@@ -53,6 +54,7 @@ def _build_response(
     stage_prompt_name: str,
     started_at: float,
     validation_issues: list[AIValidationIssue],
+    model_name: str,
 ) -> AIEmailGenerationResponse:
     latency_ms = int((perf_counter() - started_at) * 1000)
     tone_consistent = evaluate_tone_consistency(output)
@@ -61,7 +63,7 @@ def _build_response(
     return AIEmailGenerationResponse(
         invoice_id=context.invoice_id,
         generated_at=datetime.now(timezone.utc),
-        model_name=settings.openai_model_name,
+        model_name=model_name,
         prompt_version=PROMPT_VERSION,
         stage_prompt_name=stage_prompt_name,
         generation_latency_ms=latency_ms,
@@ -84,7 +86,13 @@ def generate_followup_email(db: Session, invoice_id: str) -> AIEmailGenerationRe
     stage_prompt = load_stage_prompt(context.escalation_stage)
     user_prompt = build_user_prompt(context, stage_prompt)
 
-    provider = OpenAIProvider()
+    provider_name = settings.ai_provider.strip().lower()
+    if provider_name == "gemini":
+        provider = GeminiProvider()
+        model_name = settings.gemini_model_name
+    else:
+        provider = OpenAIProvider()
+        model_name = settings.openai_model_name
     logger.info(
         "AI generation started for invoice=%s stage=%s prompt_version=%s",
         context.invoice_id,
@@ -97,7 +105,7 @@ def generate_followup_email(db: Session, invoice_id: str) -> AIEmailGenerationRe
         action_type="AI_GENERATION_ATTEMPT",
         status="STARTED",
         metadata_json={
-            "model_name": settings.openai_model_name,
+            "model_name": model_name,
             "prompt_version": PROMPT_VERSION,
             "stage_prompt_name": stage_prompt_name,
         },
@@ -161,6 +169,7 @@ def generate_followup_email(db: Session, invoice_id: str) -> AIEmailGenerationRe
         stage_prompt_name=stage_prompt_name,
         started_at=started,
         validation_issues=issues,
+        model_name=model_name,
     )
     audit_service.create_audit_log(
         db,
