@@ -256,6 +256,36 @@ Orchestration:
 - Orchestration run/resume/status/trace timeline viewer
 - Audit log explorer
 
+## Screenshots
+
+### Dashboard
+
+![Dashboard](docs/assets/dashboard.png)
+
+### Invoices
+
+![Invoices](docs/assets/invoices.png)
+
+### Workflows
+
+![Workflows](docs/assets/dashboard.png)
+
+### AI Preview
+
+![AI Preview](docs/assets/ai_preview.png)
+
+### Delivery
+
+![Delivery](docs/assets/delivery.png)
+
+### Orchestration
+
+![Orchestration](docs/assets/orchestration.png)
+
+### Audit
+
+![Audit](docs/assets/audit_logs.png)
+
 ## Deployment Readiness
 
 - Dockerfile: [Dockerfile](Dockerfile)
