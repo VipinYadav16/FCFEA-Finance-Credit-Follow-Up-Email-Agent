@@ -11,4 +11,6 @@ def init_db() -> None:
         db_path = settings.database_url.replace("sqlite:///", "")
     if db_path:
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+    if settings.reset_db_on_start:
+        Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
