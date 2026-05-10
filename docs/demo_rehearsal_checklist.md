@@ -5,6 +5,7 @@
 - [ ] Confirm `.env` exists and `BACKEND_URL` is correct
 - [ ] Start backend: `python -m uvicorn app.main:app --app-dir backend --reload`
 - [ ] Start frontend: `python -m streamlit run frontend/streamlit_app.py`
+- [ ] If using frontend venv: `frontend/.venv/Scripts/python.exe -m streamlit run frontend/streamlit_app.py`
 - [ ] Open dashboard and confirm API connectivity
 
 ## Demo Flow Order

@@ -27,7 +27,7 @@ Finance teams need consistent, auditable, and safe overdue payment follow-up wor
 - `backend/app/models`: ORM and Pydantic schemas
 - `frontend/streamlit_app.py`: operations dashboard
 
-Detailed diagrams: [docs/architecture_diagrams.md](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docs/architecture_diagrams.md)
+Detailed diagrams: [docs/architecture_diagrams.md](docs/architecture_diagrams.md)
 
 ## Workflow Lifecycle
 
@@ -123,14 +123,22 @@ Frontend:
 python -m streamlit run frontend/streamlit_app.py
 ```
 
+Optional frontend virtual environment (recommended on Windows):
+
+```bash
+python -m venv frontend/.venv
+frontend/.venv/Scripts/python.exe -m pip install -r frontend/requirements.txt
+frontend/.venv/Scripts/python.exe -m streamlit run frontend/streamlit_app.py
+```
+
 Or use helper scripts:
 
-- [scripts/run_backend.ps1](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/scripts/run_backend.ps1)
-- [scripts/run_frontend.ps1](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/scripts/run_frontend.ps1)
+- [scripts/run_backend.ps1](scripts/run_backend.ps1)
+- [scripts/run_frontend.ps1](scripts/run_frontend.ps1)
 
 ## Environment Variables
 
-See [.env.example](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/.env.example) for full list.
+See [.env.example](.env.example) for full list.
 
 Important variables:
 
@@ -183,8 +191,8 @@ Orchestration:
 
 ## Deployment Readiness
 
-- Dockerfile: [Dockerfile](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/Dockerfile)
-- Docker Compose: [docker-compose.yml](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docker-compose.yml)
+- Dockerfile: [Dockerfile](Dockerfile)
+- Docker Compose: [docker-compose.yml](docker-compose.yml)
 
 Run with Docker:
 
@@ -194,9 +202,9 @@ docker compose up --build
 
 ## Demo Assets and Walkthrough
 
-- Demo flow: [docs/demo_flow.md](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docs/demo_flow.md)
-- Presentation notes: [docs/presentation_notes.md](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/docs/presentation_notes.md)
-- Demo dataset: [data/demo/demo_invoices.csv](/C:/Users/HP/Downloads/FCFEA%20(Finance%20Credit%20Follow-Up%20Email%20Agent%20)/data/demo/demo_invoices.csv)
+- Demo flow: [docs/demo_flow.md](docs/demo_flow.md)
+- Presentation notes: [docs/presentation_notes.md](docs/presentation_notes.md)
+- Demo dataset: [data/demo/demo_invoices.csv](data/demo/demo_invoices.csv)
 - Sample outputs: `docs/sample_outputs/`
 
 ## Screenshots

@@ -99,12 +99,12 @@ class DeliveryRecord(Base):
         index=True,
     )
     delivery_mode: Mapped[str] = mapped_column(String(20), default="DRY_RUN", nullable=False)
-    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    rejected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    rejection_reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    last_error: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    metadata_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    approved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    rejected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    rejection_reason: Mapped[str] = mapped_column(String(500), nullable=True)
+    last_error: Mapped[str] = mapped_column(String(500), nullable=True)
+    metadata_json: Mapped[dict] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -55,6 +55,7 @@
 ## Environment Setup Checklist
 
 - [ ] Python environment created and dependencies installed
+- [ ] Frontend venv created (optional): `frontend/.venv`
 - [ ] `.env` created from `.env.example`
 - [ ] `GEMINI_API_KEY` configured for live AI demo
 - [ ] Backend reachable at `http://localhost:8000`
@@ -65,4 +66,4 @@
 
 - [x] Repository hygiene checked (`.gitignore`, file structure, artifact exclusion)
 - [x] Deployment files checked (`Dockerfile`, `docker-compose.yml`, startup scripts)
-- [ ] Runtime E2E validation fully re-run on this machine (blocked until Python package environment is restored)
+- [ ] Runtime E2E validation fully re-run on this machine (blocked until `GEMINI_API_KEY` is configured)
