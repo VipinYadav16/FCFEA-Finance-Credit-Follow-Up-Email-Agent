@@ -191,3 +191,36 @@ class DeliveryActionResponse(BaseModel):
 
 class DeliverySummaryResponse(BaseModel):
     counts: dict[str, int]
+
+
+class OrchestrationTraceEvent(BaseModel):
+    node: str
+    status: str
+    timestamp: datetime
+    duration_ms: int
+    message: str | None = None
+    metadata: dict[str, Any] | None = None
+
+
+class OrchestrationStatusResponse(BaseModel):
+    invoice_id: str
+    workflow_status: str
+    approval_status: str
+    delivery_status: DeliveryStatus | None = None
+    current_node: str | None = None
+    error_state: str | None = None
+    started_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class OrchestrationRunResponse(BaseModel):
+    invoice_id: str
+    workflow_status: str
+    message: str
+    trace_events: list[OrchestrationTraceEvent]
+
+
+class OrchestrationTraceResponse(BaseModel):
+    invoice_id: str
+    workflow_status: str
+    trace_events: list[OrchestrationTraceEvent]

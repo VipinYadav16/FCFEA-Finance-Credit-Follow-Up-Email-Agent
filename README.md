@@ -77,6 +77,30 @@ Workflow-first architecture for enterprise finance follow-up with deterministic 
   - `DELIVERY_REGENERATE`
   - `DELIVERY_DRY_RUN`
 
+## LangGraph Orchestration Scope (Step 6)
+
+- LangGraph is used as a coordination layer over existing deterministic services.
+- Existing workflow, AI validation, and delivery logic are reused (not rewritten).
+- Centralized orchestration graph state includes:
+  - invoice id
+  - escalation stage
+  - workflow status
+  - approval status
+  - delivery status
+  - validation status
+  - trace events
+  - error state
+- Graph lifecycle:
+  - Fetch Invoice
+  - Workflow Processing
+  - AI Generation
+  - AI Validation
+  - Preview Creation
+  - Approval Wait (pause/interruption point)
+  - Dry-Run Delivery
+  - Audit Complete
+- Resume flow uses a dedicated graph segment starting from Approval Wait.
+
 ## AI Safety Boundaries
 
 - AI cannot control escalation, overdue logic, or workflow state decisions.
@@ -115,6 +139,13 @@ Workflow-first architecture for enterprise finance follow-up with deterministic 
 - `GET /delivery/status/{invoice_id}`
 - `GET /delivery/pending-approvals`
 - `GET /delivery/summary`
+
+### Orchestration
+
+- `POST /orchestration/run/{invoice_id}`
+- `POST /orchestration/resume/{invoice_id}`
+- `GET /orchestration/trace/{invoice_id}`
+- `GET /orchestration/status/{invoice_id}`
 
 ## Setup
 

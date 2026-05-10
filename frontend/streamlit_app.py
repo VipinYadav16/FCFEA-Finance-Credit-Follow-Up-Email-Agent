@@ -151,6 +151,42 @@ def delivery_dry_run_send(invoice_id: str) -> tuple[dict | None, str | None]:
         return None, str(exc)
 
 
+def orchestration_run(invoice_id: str) -> tuple[dict | None, str | None]:
+    try:
+        response = requests.post(f"{BACKEND_URL}/orchestration/run/{invoice_id}", timeout=60)
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
+def orchestration_resume(invoice_id: str) -> tuple[dict | None, str | None]:
+    try:
+        response = requests.post(f"{BACKEND_URL}/orchestration/resume/{invoice_id}", timeout=60)
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
+def orchestration_trace(invoice_id: str) -> tuple[dict | None, str | None]:
+    try:
+        response = requests.get(f"{BACKEND_URL}/orchestration/trace/{invoice_id}", timeout=15)
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
+def orchestration_status(invoice_id: str) -> tuple[dict | None, str | None]:
+    try:
+        response = requests.get(f"{BACKEND_URL}/orchestration/status/{invoice_id}", timeout=15)
+        response.raise_for_status()
+        return response.json(), None
+    except requests.RequestException as exc:
+        return None, str(exc)
+
+
 def render_metrics(invoices: list[dict], overdue: list[dict], escalated: list[dict]) -> None:
     total = len(invoices)
     overdue_count = len(overdue)
@@ -167,7 +203,7 @@ def render_metrics(invoices: list[dict], overdue: list[dict], escalated: list[di
 st.sidebar.title("Navigation")
 page = st.sidebar.selectbox(
     "Go to",
-    ["Dashboard", "Invoices", "Workflows", "AI Previews", "Delivery", "Audit Logs"],
+    ["Dashboard", "Invoices", "Workflows", "AI Previews", "Delivery", "Orchestration", "Audit Logs"],
 )
 
 st.sidebar.subheader("Upload (Placeholder)")
@@ -376,6 +412,58 @@ else:
                 st.warning(f"Status fetch failed: {status_err}")
             elif status_data:
                 st.json(status_data)
+    elif page == "Orchestration":
+        st.subheader("LangGraph Orchestration")
+        selectable = [inv.get("invoice_id") for inv in invoices if inv.get("invoice_id")]
+        if not selectable:
+            st.info("No invoices available for orchestration.")
+        else:
+            selected_orch_invoice = st.selectbox("Orchestration invoice", selectable)
+            c1, c2, c3, c4 = st.columns(4)
+            with c1:
+                if st.button("Run Workflow"):
+                    res, err = orchestration_run(selected_orch_invoice)
+                    if err:
+                        st.error(f"Run failed: {err}")
+                    else:
+                        st.success("Workflow run executed.")
+                        st.json(res)
+            with c2:
+                if st.button("Resume Workflow"):
+                    res, err = orchestration_resume(selected_orch_invoice)
+                    if err:
+                        st.error(f"Resume failed: {err}")
+                    else:
+                        st.success("Workflow resumed.")
+                        st.json(res)
+            with c3:
+                if st.button("Get Status"):
+                    res, err = orchestration_status(selected_orch_invoice)
+                    if err:
+                        st.error(f"Status failed: {err}")
+                    else:
+                        st.info("Workflow status:")
+                        st.json(res)
+            with c4:
+                if st.button("Get Trace"):
+                    res, err = orchestration_trace(selected_orch_invoice)
+                    if err:
+                        st.error(f"Trace failed: {err}")
+                    else:
+                        st.info("Execution trace:")
+                        st.json(res)
+
+            st.divider()
+            trace_data, trace_err = orchestration_trace(selected_orch_invoice)
+            if trace_err:
+                st.warning(f"Trace fetch warning: {trace_err}")
+            elif trace_data:
+                st.subheader("Execution Timeline")
+                events = trace_data.get("trace_events", [])
+                if events:
+                    st.dataframe(events, use_container_width=True)
+                else:
+                    st.info("No trace events yet.")
     else:
         st.subheader("Audit Logs")
         log_limit = st.slider("Logs to fetch", min_value=10, max_value=500, value=100, step=10)
