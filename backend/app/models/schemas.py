@@ -81,3 +81,29 @@ class AuditLogResponse(BaseModel):
     status: str
     timestamp: datetime
     metadata_json: dict[str, Any] | None
+
+
+class WorkflowInvoiceContext(BaseModel):
+    invoice_id: str
+    client_name: str
+    client_email: EmailStr
+    amount_due: Decimal
+    due_date: date
+    overdue_days: int
+    escalation_stage: EscalationStage
+    payment_status: PaymentStatus
+    follow_up_count: int
+
+
+class WorkflowRunSummary(BaseModel):
+    started_at: datetime
+    finished_at: datetime
+    processed_count: int
+    updated_count: int
+    skipped_count: int
+    error_count: int
+    overdue_count: int
+    escalated_count: int
+    legal_escalation_count: int
+    stage_counts: dict[str, int]
+    updated_invoices: list[WorkflowInvoiceContext]

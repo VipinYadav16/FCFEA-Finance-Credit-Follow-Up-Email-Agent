@@ -17,3 +17,13 @@ class InvoiceNotFoundError(AppError):
 class DatabaseError(AppError):
     def __init__(self, message: str) -> None:
         super().__init__(message)
+
+
+class WorkflowProcessingError(AppError):
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class InvalidWorkflowStateError(AppError):
+    def __init__(self, message: str) -> None:
+        super().__init__(message)

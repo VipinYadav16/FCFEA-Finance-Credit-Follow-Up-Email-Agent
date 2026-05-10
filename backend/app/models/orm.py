@@ -32,7 +32,7 @@ class Invoice(Base):
         default=PaymentStatus.PENDING,
         nullable=False,
     )
-    last_followup_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_followup_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -60,4 +60,4 @@ class AuditLog(Base):
     action_type: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False)
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, index=True)
-    metadata_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    metadata_json: Mapped[dict] = mapped_column(JSON, nullable=True)
