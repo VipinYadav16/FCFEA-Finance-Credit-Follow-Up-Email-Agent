@@ -115,6 +115,7 @@ def process_overdue_invoices(db: Session) -> WorkflowRunSummary:
             legal_escalation_count += 1
 
     finished_at = datetime.now(timezone.utc)
+    duration_seconds = (finished_at - started_at).total_seconds()
     logger.info(
         "Workflow run complete: processed=%s updated=%s skipped=%s errors=%s overdue=%s escalated=%s legal=%s",
         counts.processed,
@@ -124,6 +125,7 @@ def process_overdue_invoices(db: Session) -> WorkflowRunSummary:
         overdue_count,
         escalated_count,
         legal_escalation_count,
+        duration_seconds,
     )
     return WorkflowRunSummary(
         started_at=started_at,
@@ -135,6 +137,7 @@ def process_overdue_invoices(db: Session) -> WorkflowRunSummary:
         overdue_count=overdue_count,
         escalated_count=escalated_count,
         legal_escalation_count=legal_escalation_count,
+        duration_seconds=duration_seconds,
         stage_counts=stage_counts,
         updated_invoices=updated_contexts,
     )

@@ -105,5 +105,6 @@ class WorkflowRunSummary(BaseModel):
     overdue_count: int
     escalated_count: int
     legal_escalation_count: int
+    duration_seconds: float
     stage_counts: dict[str, int]
     updated_invoices: list[WorkflowInvoiceContext]
