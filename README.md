@@ -302,6 +302,7 @@ docker compose up --build
 - Demo flow: [docs/demo_flow.md](docs/demo_flow.md)
 - Presentation notes: [docs/presentation_notes.md](docs/presentation_notes.md)
 - Demo dataset: [data/demo/demo_invoices.csv](data/demo/demo_invoices.csv)
+- Demo dataset: [data/demo/test_invoice_data.csv](data/demo/test_invoice_data.csv)
 - Sample outputs: `docs/sample_outputs/`
 
 ## Future Improvements
