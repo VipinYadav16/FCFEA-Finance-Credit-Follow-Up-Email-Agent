@@ -353,7 +353,6 @@ docker compose up --build
   - Deterministic context injection from workflow data only
   - Structured output schema validation via Pydantic
   - Forbidden phrase and unsafe language detection
-  - Hallucination checks against invoice_id, amount, due_date, and stage
 
 #### Security Risk Mitigation
 
